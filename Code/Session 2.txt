@@ -1,0 +1,17 @@
+R:
+https://cran.r-project.org/
+
+RStudio:
+https://rstudio.com/
+
+GitHub:
+https://github.com/
+
+(optional) Unlock GitHub education pack:
+https://education.github.com/
+
+GitHub Desktop:
+https://desktop.github.com/
+
+Workshop repository:
+https://github.com/psychNerdJae/into-the-tidyverse
