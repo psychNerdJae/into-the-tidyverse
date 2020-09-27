@@ -12,6 +12,9 @@ A little about me: I'm neither a programmer nor a statistician by training. I'm 
 
 ## File and folder structure
 
+Files in the parent folder:
+Whenever you want to engage with these workshops, remember to first double-click on `into-the-tidyverse.Rproj` first. This opens up a new R session (so that work you're doing for this project doesn't disturb whatever work you might be doing for other R projects).
+
 Sandbox:
 For reasons that are explained in more detail in *Sandbox/readme.txt*, you should never, ever, ever modify anything that's in any other folder. Seriously, under most circumstances, there should be no reason for you to ever navigate into these directories or open these files. If you're wanting to save scripts, plots, whatever, you should do it in the Sandbox.
 
@@ -21,8 +24,8 @@ I'm providing all of the code from the videos in the Code folder. These scripts 
 Data:
 We will be using a diverse range of datasets from a variety of sources. There are times when it will make sense for you to directly download the data from the source (such as timeseries data on covid19, which is updated on a daily basis), but otherwise, the datasets will be provided in the Data folder. When applicable/available, the URLs will be documented in the relevant scripts.
 
-Files in the parent folder:
-Whenever you want to engage with these workshops, remember to first double-click on `into-the-tidyverse.Rproj` first. This opens up a new R session (so that work you're doing for this project doesn't disturb whatever work you might be doing for other R projects).
+Output:
+Sometimes, there will be some kind of output we want to save to our hard drive (like a plot or table). These will be saved in the Output folder.
 
 ## Session descriptions
 
