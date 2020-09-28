@@ -37,7 +37,7 @@ Sometimes, there will be some kind of output we want to save to our hard drive (
 	- If you're following along with this as I'm creating new materials in realtime, how to "sync" new materials so that you have the most recent version of my materials on your computer, and how to avoid creating headaches for yourself.
 3. Reading data.
 	- Using `readr` to get data into R.
-	- Understanding dataframes and their close cousins, tibbles.
+	- Understanding dataframes and their close cousins, the `tibble`.
 	- Datatypes.
 4. Manipulating data.
 	- Getting familiar with functions.
