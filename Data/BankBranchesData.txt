@@ -1,0 +1,199 @@
+PropertyName	Address1	Address2	City	State	Zip	Latitude	Longitude	Phone	Website
+BB&T Bank (West Main)	401 W Main St #100		 Louisville	KY	40202	38.2571760000	-85.7570410000	(502) 562-5401	http://www.bbt.com/
+BB&T Bank (Bardstown)	1339 Bardstown Road		 Louisville	KY	40204	38.2346632000	-85.7138786000	(502) 451-1082	http://www.bbt.com/
+BB&T Bank (St.Matthews)	3747 Lexington Road		 Louisville	KY	40207	38.2528074000	-85.6577343000	(502) 891-2667	http://www.bbt.com/
+BB&T Bank (St.Matthews)	4507 Shelbyville Road		 Louisville	KY	40207	38.2512090000	-85.6308420000	(502) 891-2660	http://www.bbt.com/
+BB&T Bank (Bluegrass Parkway)	11490 Bluegrass Parkway		 Louisville	KY	40299	38.2184578000	-85.5421875000	(800) 550-1274	http://www.bbt.com/
+BB&T Bank (Bashford Manor)	3534 Bardstown Road		 Louisville	KY	40218	38.2006595000	-85.6635132000	(502) 452-6595	http://www.bbt.com/
+BB&T Bank Insurance Services	2600 Eastpoint Parkway		 Louisville	KY	40223	38.2845030000	-85.5086710000	(502) 489-5900	http://www.bbt.com/
+BB&T Bank (Springhurst)	9510 Brownsboro Road		 Louisville	KY	40241	38.3073630000	-85.5741550000	(502) 412-0416	http://www.bbt.com/
+BB&T Bank (Dixie)	5110 Dixie Highway		 Louisville	KY	40216	38.1677080000	-85.8298600000	(502) 449-7340	http://www.bbt.com/
+BB&T Bank (Park Place)	9050 Dixie Highway		 Louisville	KY	40258	38.1245800000	-85.8533829000	(502) 933-4024	http://www.bbt.com/
+BB&T Bank (Southside)	7111 Southside Drive		 Louisville	KY	40214	38.1528149000	-85.7647010000	(502) 363-1535	http://www.bbt.com/
+BB&T Bank (Russell)	2501 W Broadway		 Louisville	KY	40211	38.2498190000	-85.7934949000	(502)772-1025	http://www.bbt.com/
+BB&T Bank (Algonquin)	3140 Wilson Avenue		 Louisville	KY	40211	38.2246300000	-85.8087010000	(502)772-0131	http://www.bbt.com/
+BB&T Bank (Taylor)	3450 Taylor Boulevard		 Louisville	KY	40215	38.1974010000	-85.7833030000	(502)363-1544	http://www.bbt.com/
+BB&T Bank (Jeffersonville)	2705 E 10th Street		 Jeffersonville	IN	47130	38.3171234000	-85.7158106000	(812)704-1240	http://www.bbt.com/
+BB&T Bank (Preston)	5319 Preston Highway		 Louisville	KY	40213	38.1712380000	-85.7085759000	(502)810-0434	http://www.bbt.com/
+BB&T Bank (New Albany)	4210 Charlestown Road		 New Albany	IN	47160	38.3498570000	-85.7952550000	(812)949-9909	http://www.bbt.com/
+BB&T Bank (Brownsboro)	4908 U.S. 42		 Louisville	KY	40222	38.2814440000	-85.6340260000	(502) 412-0171	http://www.bbt.com/
+BB&T Bank (Poplar Level)	5004 Poplar Level Road		 Louisville	KY	40219	38.1664210000	-85.6815430000	(502)810-0427	http://www.bbt.com/
+BB&T Bank (Hikes Point)	4082 Taylorsville Road		 Louisville	KY	40220	38.2196019000	-85.6215314000	(502)238-4219	http://www.bbt.com/
+BB&T Bank (Jefferson Pavillion)	7301 Jefferson Boulevard		 Louisville	KY	40219	38.1453730000	-85.6744080000	(502)810-0417	http://www.bbt.com/
+BB&T Bank (Stonybrook)	2601 S Hurstbourne Parkway		 Jeffersontown	KY	40220	38.2127210000	-85.5935270000	(502)493-3460	http://www.bbt.com/
+BB&T Bank (Hurstbourne)	330 Whittington Parkway		 Louisville	KY	40222	38.2417960000	-85.5777440000	(502)412-0273	http://www.bbt.com/
+BB&T Bank (Westport Plaza)	2900 N Hurstbourne Parkway		 Louisville	KY	40241	38.2886595000	-85.5743500000	(502)231-2297	http://www.bbt.com/
+BB&T Bank (Dixie Valley)	10403 Dixie Highway		 Louisville	KY	40272	38.1043490000	-85.8682070000	(502) 933-1618	http://www.bbt.com/
+BB&T Bank (Blankenbaker)	721 Blankenbaker Parkway		 Louisville	KY	40243	38.2312889000	-85.5420460000	(502)267-1078	http://www.bbt.com/
+BB&T Bank (Fern Creek)	6740 Bardstown Road		 Louisville	KY	40291	38.1478390000	-85.5869300000	(502) 231-0176	http://www.bbt.com/
+Chase Bank (Bardstown)	1718 Bardstown Road		 Louisville	KY	40205	38.2294530000	-85.7032380000	(502) 566-2161	https://www.chase.com/
+Chase Bank (Louisville Main)	416 W Jefferson Street		 Louisville	KY	40202	38.2534690000	-85.7574890000	502-566-2002	https://www.chase.com/
+Chase Bank (Medical Center)	601 S Floyd Street		 Louisville	KY	40208	38.2477837000	-85.7491089000	502-566-1901	https://www.chase.com/
+Chase Bank (Broadway)	2600 W Broadway Suite 101		 Louisville	KY	40211	38.2480390000	-85.7955840000	502-566-2231	https://www.chase.com/
+Chase Bank (Jeffersonville)	443 Spring Street		 Jeffersonville	IN	47130	38.2739700000	-85.7424010000	812- 284-7433	https://www.chase.com/
+Chase Bank (7th Street)	1481 S 7th Street		 Louisville	KY	40208	38.2269580000	-85.7685140000	(502) 566-2201	https://www.chase.com/
+Chase Bank (Shelby)	1224 S Shelby Street		 Louisville	KY	40203	38.2323680000	-85.7420070000	502-566-2331	https://www.chase.com/
+Chase Bank (Highlands)	970 Baxter Avenue		 Louisville	KY	40204	38.2403117000	-85.7245474000	502-566-1870	https://www.chase.com/
+Chase Bank (Jeffersonville)	1642 E 10th Street		 Jeffersonville	IN	47130	38.2939488000	-85.7270129000	812-284-7540	https://www.chase.com/
+Chase Bank (New Albany)	120 W Spring Street		 New Albany	IN	47150	38.2859820000	-85.8251150000	812-941-6321	https://www.chase.com/
+Chase Bank (Shively)	3901 S 7th Street		 Louisville	KY	40215	38.1967694000	-85.7990344000	502-449-2425	https://www.chase.com/
+Chase Bank (Poplar Level)	4038 Poplar Level Road		 Louisville	KY	40213	38.1993180000	-85.7084160000	(502) 566-2431	https://www.chase.com/
+Chase Bank (Brownsboro)	3820 Brownsboro Park Boulevard		 Louisville	KY	40207	38.2805248000	-85.6396261000	502-566-1933	https://www.chase.com/
+Republic Bank (Louisville Main)	601 W Market Street		 Louisville	KY	40202	38.2556089000	-85.7601024000	(502) 584-3600	https://www.republicbank.com/home/personal
+Republic Bank (Jewish Hospital)	220 Abraham Flexner Way		 Louisville	KY	40202	38.2490846000	-85.7504004000	(502) 588-3115	https://www.republicbank.com/home/personal
+Republic Bank (Broadway)	2028 W Broadway		 Louisville	KY	40203	38.2487410000	-85.7862210000	(502) 772-7500	https://www.republicbank.com/home/personal
+Republic Bank (Poplar Level)	1420 Poplar Level Road		 Louisville	KY	40217	38.2199310000	-85.7294040000	(502) 636-2661	https://www.republicbank.com/home/personal
+Republic Bank (Highlands)	2801 Bardstown Road		 Louisville	KY	40291	38.2183304000	-85.6780095000	(502) 459-2200	https://www.republicbank.com/home/personal
+Republic Bank (St.Matthews)	3726 Lexington Road		 Louisville	KY	40207	38.2519080000	-85.6594220000	(502) 893-2533	https://www.republicbank.com/home/personal
+Republic Bank (New Cut)	5125 New Cut Road		 Louisville	KY	40214	38.1620250000	-85.7787430000	(502) 363-4644	https://www.republicbank.com/home/personal
+Republic Bank (Baptist East)	3950 Kresge Way		 Louisville	KY	40207	38.2385219000	-85.6406008000	(502) 897-3800	https://www.republicbank.com/home/personal
+Republic Bank (New Albany)	3001 Charlestown Crossing Way		 New Albany	IN	47150	38.3503680000	-85.7962450000	(812) 949-2600	https://www.republicbank.com/home/personal
+Republic Bank (Brownsboro)	4921 Brownsboro Road		 Louisville	KY	40222	38.2817910000	-85.6324560000	(502) 339-9700	https://www.republicbank.com/home/personal
+Republic Bank (Hikes Point)	3902 Taylorsville Road		 Louisville	KY	40220	38.2197150000	-85.6306870000	(502) 451-2006	https://www.republicbank.com/home/personal
+Republic Bank (Dixie)	5250 Dixie Highway		 Louisville	KY	40216	38.1619546000	-85.8318880000	(502) 448-7000	https://www.republicbank.com/home/personal
+Republic Bank (Outer Loop)	4808 Outer Loop		 Louisville	KY	40219	38.1374820000	-85.6727190000	(502) 969-8999	https://www.republicbank.com/home/personal
+Republic Bank (Hurstbourne)	661 S Hurstbourne Parkway		 Louisville	KY	40222	38.2373920000	-85.5765220000	(502) 425-2300	https://www.republicbank.com/home/personal
+Republic Bank (Springhurst)	9600 Brownsboro Road		 Louisville	KY	40241	38.3078665000	-85.5728918000	(502) 339-2200	https://www.republicbank.com/home/personal
+Republic Bank (Jeffersontown)	3811 Ruckriegel Parkway		 Louisville	KY	40299	38.1879400000	-85.5649720000	(502) 266-5466	https://www.republicbank.com/home/personal
+Republic Bank (Middletown)	11330 Main Street		 Louisville	KY	40243	38.2427717000	-85.5459757000	(502) 254-7555	https://www.republicbank.com/home/personal
+Republic Bank (Fern Creek)	10100 Brookridge Village Boulevard		 Louisville	KY	40291	38.1450430000	-85.5841930000	(502) 231-5522	https://www.republicbank.com/home/personal
+Woodforest Bank (Outer Loop)	175 Outer Loop		 Louisville	KY	40214	38.1282380000	-85.7799050000	(502) 375-8773	http://www.woodforest.com/
+Woodforest Bank (Valley Station)	7100 Raggard Road		 Louisville	KY	40216	38.1719300000	-85.8706730000	502.447.2433	http://www.woodforest.com/
+Woodforest Bank (Bardstown)	7101 Cedar Springs Boulevard		 Louisville	KY	40291	38.1428940000	-85.5865300000	(502) 239-4899	http://www.woodforest.com/
+Woodforest Bank (Standiford)	11901 Standiford Plaza Drive		 Louisville	KY	40229	38.0887260000	-85.6648370000	(502) 969-9125	http://www.woodforest.com/
+First Capital Bank of Kentucky (Main)	293 N Hubbards Lane		 Louisville	KY	40207	38.2593230000	-85.6401000000	502-895-5040	http://www.fcbok.com
+First Capital Bank of Kentucky (Fern Creek)	6512 Bardstown Road		 Louisville	KY	40291	38.1521220000	-85.5887820000	502-891-3599	http://www.fcbok.com
+First Capital Bank of Kentucky (Bardstown)	2735 Bardstown Road		 Louisville	KY	40205	38.2189180000	-85.6782600000	(502) 259-3000	http://www.fcbok.com
+First Capital Bank of Kentucky (Crescent Hill)	2862 Frankfort Avenue		 Louisville	KY	40206	38.2543790000	-85.6875380000	502-894-2380	http://www.fcbok.com
+First Capital Bank of Kentucky (Middletown)	13704 Shelbyville Road		 Louisville	KY	40245	38.2417305000	-85.5011878000	502-891-0100	http://www.fcbok.com
+Your Community Bank (Main Street)	471 W Main Street		 Louisville	KY	40202	38.2572400000	-85.7576910000	502-569-4266	https://www.yourcommunitybank.com/
+Your Community Bank (St.Matthews)	4510 Shelbyville Road		 Louisville	KY	40207	38.2505090000	-85.6329200000	(502) 895-1713	https://www.yourcommunitybank.com/
+Your Community Bank (Eastpoint)	13205 Magisterial Drive		 Louisville	KY	40223	38.2688261000	-85.5070888000	(502) 489-3600	https://www.yourcommunitybank.com/
+Your Community Bank (Jeffersonville)	201 W Court Avenue		 Jeffersonville	IN	47130	38.2732400000	-85.7435970000	(812) 285-1111	https://www.yourcommunitybank.com/
+Your Community Bank (Jeffersonville)	5112 Indiana 62		 Jeffersonville	IN	47130	38.3523831000	-85.7037825000	(812) 285-4050	https://www.yourcommunitybank.com/
+Your Community Bank (Jeffersonville)	2917 E 10th Street		 Jeffersonville	IN	47130	38.3211640000	-85.7138918000	(812) 258-2060	https://www.yourcommunitybank.com/
+PNC Bank (Louisville Plaza)	500 W Jefferson Street		 Louisville	KY	40202	38.2536630000	-85.7592510000	502-581-7081	https://www.pnc.com
+PNC Bank (Louisville Tower)	101 S 5th Street		 Louisville	KY	40202	38.2561430000	-85.7578730000	502-581-6424	https://www.pnc.com
+PNC Bank (East Broadway)	535 E Broadway		 Louisville	KY	40202	38.2453510000	-85.7438580000	(502) 581-4120	https://www.pnc.com
+PNC Bank (4th Street)	1200 S 4th Street		 Louisville	KY	40203	38.2348270000	-85.7607040000	502-581-5430	https://www.pnc.com
+PNC Bank (Portland)	2601 Bank Street		 Louisville	KY	40212	38.2696220000	-85.7911680000	502-581-5220	https://www.pnc.com
+PNC Bank (Jeffersonville)	405 E Court Avenue		 Jeffersonville	IN	47130	38.2764580000	-85.7385970000	812-284-2265	https://www.pnc.com
+PNC Bank (West Broadway)	3405 W Broadway		 Louisville	KY	40211	38.2502650000	-85.8083350000	502-581-5390	https://www.pnc.com
+PNC Bank (University)	1900 S 3rd Street		 Louisville	KY	40208	38.2203900000	-85.7617300000	502-212-6180	https://www.pnc.com
+PNC Bank (Eastern Parkway)	801 Eastern Parkway		 Louisville	KY	40217	38.2152190000	-85.7427030000	502-581-5410	https://www.pnc.com
+PNC Bank (Cherokee)	1301 Bardstown Road		 Louisville	KY	40204	38.2354610000	-85.7149280000	502-581-7560	https://www.pnc.com
+PNC Bank (Dixie)	2400 Dixie Highway		 Louisville	KY	40216	38.2152570000	-85.7962420000	502-581-5383	https://www.pnc.com
+PNC Bank (Clarksville)	819 Eastern Boulevard		 Clarksville	IN	47129	38.3013360000	-85.7640980000	(812) 282-1717	https://www.pnc.com
+PNC Bank (South Louisville)	3100 S 4th Street		 Louisville	KY	40214	38.2049130000	-85.7659610000	502-581-4232	https://www.pnc.com
+PNC Bank (Audobon)	3001 Preston Highway		 Louisville	KY	40217	38.2065960000	-85.7369360000	502-581-6675	https://www.pnc.com
+PNC Bank (New Albany)	400 State Street		 New Albany	IN	47150	38.2860070000	-85.8239240000	812-949-6600	https://www.pnc.com
+PNC Bank (Brownsboro)	2790 Brownsboro Road		 Louisville	KY	40206	38.2592519000	-85.6928030000	502-581-4237	https://www.pnc.com
+PNC Bank (Bardstown)	2123 Bardstown Road		 Louisville	KY	40205	38.2249082000	-85.6942321000	502-581-5333	https://www.pnc.com
+PNC Bank (New Albany)	2659 Charlestown Road		 New Albany	IN	47150	38.3187890000	-85.8037890000	812-948-4490	https://www.pnc.com
+PNC Bank (New Albany)	2014 State Street		 New Albany	IN	47150	38.3027030000	-85.8373087000	812-949-6675	https://www.pnc.com
+PNC Bank (Woodlawn)	4640 Southern Parkway		 Louisville	KY	40214	38.1820702000	-85.7682009000	502-581-4400	https://www.pnc.com
+PNC Bank (Jeffersonville)	1712 Charlestown New Albany Road		 Jeffersonville	IN	47130	38.3247266000	-85.7428603000	812-948-4447	https://www.pnc.com
+PNC Bank (Jeffersonville)	2910 E 10th Street		 Jeffersonville	IN	47130	38.3209960000	-85.7137526000	812-284-6850	https://www.pnc.com
+PNC Bank (Cane Run)	4305 Cane Run Road		 Louisville	KY	40216	38.2003585000	-85.8360532000	502-212-6130	https://www.pnc.com
+PNC Bank (Indian Hills)	3810 Brownsboro Road		 Louisville	KY	40207	38.2655553000	-85.6666221000	502-581-6640	https://www.pnc.com
+PNC Bank (Hawthorne)	2901 Bardstown Road		 Louisville	KY	40205	38.2167273000	-85.6758724000	(502) 212-6100	https://www.pnc.com
+PNC Bank (Iroquois)	5021 S 3rd Street		 Louisville	KY	40214	38.1734250000	-85.7669109000	502-212-6150	https://www.pnc.com
+PNC Bank (New Albany)	3308 Grant Line Road		 New Albany	IN	47150	38.3270399000	-85.8183760000	812-949-6625	https://www.pnc.com
+PNC Bank (Newburg)	3340 Newburg Road		 Louisville	KY	40218	38.1986610000	-85.6841740000	502-212-6200	https://www.pnc.com
+PNC Bank (St.Matthews)	3828 Shelbyville Road		 Louisville	KY	40207	38.2526280000	-85.6556260000	502-212-6280	https://www.pnc.com
+PNC Bank (Dixie)	4726 Dixie Highway		 Louisville	KY	40216	38.1740363000	-85.8240982000	502-581-4416	https://www.pnc.com
+Fifth Third Bank (Market)	309 W Market Street		 Louisville	KY	40202	38.2554940000	-85.7554430000	(502) 589-4165	https://www.53.com
+Fifth Third Bank (4th Street)	401 S 4th Street		 Louisville	KY	40202	38.2527400000	-85.7568740000	(502) 562-5215	https://www.53.com
+Fifth Third Bank (Broadway)	1501 W Broadway		 Louisville	KY	40203	38.2487350000	-85.7768940000	(502) 540-1450	https://www.53.com
+Fifth Third Bank (Preston)	2425 S Shelby Street		 Louisville	KY	40217	38.2134230000	-85.7413000000	(502) 635-2628	https://www.53.com
+Fifth Third Bank (South Louisville)	3014 S 4th Street		 Louisville	KY	40208	38.2057950000	-85.7659080000	(502) 634-9297	https://www.53.com
+Fifth Third Bank (Brownsboro)	2200 Brownsboro Road		 Louisville	KY	40206	38.2580280000	-85.7042190000	(502) 895-1981	https://www.53.com
+Fifth Third Bank (Bardstown)	2000 Bardstown Road		 Louisville	KY	40291	38.2253432000	-85.6959369000	(502) 456-5669	https://www.53.com
+Fifth Third Bank (Shively)	3901 Dixie Highway		 Louisville	KY	40216	38.1951452000	-85.8058735000	(502) 447-1130	https://www.53.com
+Fifth Third Bank (Jeffersonville)	2932 E 10th Street		 Jeffersonville	IN	47130	38.3213641000	-85.7135590000	(812) 218-8575	https://www.53.com
+Fifth Third Bank (Poplar Level)	4201 Poplar Level Road		 Louisville	KY	40213	38.1992140000	-85.7074389000	(502) 454-9180	https://www.53.com
+Fifth Third Bank (New Albany)	3401 Grant Line Road		 New Albany	IN	47150	38.3285120000	-85.8193160000	(812) 948-8679	https://www.53.com
+Fifth Third Bank (St.Matthews)	4090 Shelbyville Road		 Louisville	KY	40207	38.2519009000	-85.6477110000	(502) 897-7177	https://www.53.com
+Fifth Third Bank (Buechel)	3603 Buechel Bypass		 Louisville	KY	40218	38.1991730000	-85.6609730000	(502) 456-5884	https://www.53.com
+Fifth Third Bank (Woodlawn)	291 N Hubbards Lane		 Louisville	KY	40207	38.2588040000	-85.6373650000	(502) 894-0111	https://www.53.com
+Fifth Third Bank (St.Matthews)	960 Breckenridge Lane		 Louisville	KY	40207	38.2349228000	-85.6416907000	(502) 899-2160	https://www.53.com
+Fifth Third Bank (Dixie)	5200 Dixie Highway		 Louisville	KY	40216	38.1646069000	-85.8311320000	(502) 447-3537	https://www.53.com
+Fifth Third Bank (New Cut)	5393 New Cut Road		 Louisville	KY	40214	38.1509670000	-85.7760110000	(502) 366-9709	https://www.53.com
+Fifth Third Bank (Brownsboro)	2207 Holiday Manor Center		 Louisville	KY	40222	38.2841809000	-85.6312279000	(502) 425-8202	https://www.53.com
+Fifth Third Bank (Hikes Lane)	3344 Hikes Lane		 Louisville	KY	40220	38.2181450000	-85.6279044000	(502) 456-2627	https://www.53.com
+Fifth Third Bank (Lyndon)	9900 Ormsby Station Road		 Louisville	KY	40223	38.2645908000	-85.5679010000	(502) 429-5251	https://www.53.com
+Fifth Third Bank (Jeffersontown)	9080 Taylorsville Road		 Louisville	KY	40299	38.2143190000	-85.5895546000	(502) 491-4611	https://www.53.com
+Fifth Third Bank (Middletown)	10400 Shelbyville Road		 Louisville	KY	40223	38.2451894000	-85.5622421000	(502) 245-2177	https://www.53.com
+Fifth Third Bank (Old Brownsboro)	4801 Norton Healthcare Boulevard		 Louisville	KY	40241	38.3116830000	-85.5701510000	(502) 326-2630	https://www.53.com
+Fifth Third Bank (Hurstbourne)	3801 S Hurstbourne Parkway		 Louisville	KY	40299	38.1925750000	-85.6043380000	(502) 493-4713	https://www.53.com
+Fifth Third Bank (Ruckriegel)	3821 Ruckriegel Parkway		 Louisville	KY	40299	38.1880290000	-85.5658400000	(502) 297-6190	https://www.53.com
+Fifth Third Bank (New Cut)	5533 New Cut Road		 Louisville	KY	40214	38.1443640000	-85.7737280000	(502) 368-3357	https://www.53.com
+Fifth Third Bank (Okolona)	8003 Preston Highway		 Louisville	KY	40219	38.1365890000	-85.6849880000	(502) 964-3393	https://www.53.com
+Fifth Third Bank (Dixie)	9711 Dixie Highway		 Louisville	KY	40210	38.1143964000	-85.8610534000	(502) 933-5418	https://www.53.com
+Fifth Third Bank (Valley Station)	10645 Dixie Highway		 Louisville	KY	40272	38.0987620000	-85.8701050000	(502) 935-0900	https://www.53.com
+Fifth Third Bank (Hillview)	11700 Antonia Way		 Louisville	KY	40229	38.0940030000	-85.6703280000	(502) 968-1135	https://www.53.com
+Fifth Third Bank (Outer Loop)	7519 Outer Loop		 Louisville	KY	40228	38.1374980000	-85.6201183000	(502) 231-2628	https://www.53.com
+American Founders Bank (Lyndon)	1200 Forest Bridge Road		 Louisville	KY	40223	38.2623070000	-85.5745270000	502-638-4750	https://www.afbusa.com/
+American Founders Bank (St.Matthews)	4220 Shelbyville Road		 Louisville	KY	40207	38.2514988000	-85.6383821000	502-895-7415	https://www.afbusa.com/
+Commonwealth Bank (Aegon)	400 W Market Street		 Louisville	KY	40202	38.2551470000	-85.7571056000	(502) 259-2020	http://www.cbandt.com/
+Commonwealth Bank (Anchorage)	1402 Evergreen Road		 Louisville	KY	40223	38.2657179000	-85.5394158000	(502) 259-2040	http://www.cbandt.com/
+Commonwealth Bank (Highlands)	2401 Bardstown Road		 Louisville	KY	40291	38.2240090000	-85.6880410000	(502) 259-2160	http://www.cbandt.com/
+Commonwealth Bank (Blankenbaker)	801 Blankenbaker Parkway		 Louisville	KY	40243	38.2307434000	-85.5424137000	502.259.2180	http://www.cbandt.com/
+Commonwealth Bank (Holiday Manor)	4944 U.S. 42		 Louisville	KY	40222	38.2834800000	-85.6323710000	(502) 259-2080	http://www.cbandt.com/
+Commonwealth Bank (Humana)	500 E Main Street		 Louisville	KY	40202	38.2552096000	-85.7438623000	(502) 259-2060	http://www.cbandt.com/
+Commonwealth Bank (Middletown)	12906 Shelbyville Road		 Louisville	KY	40243	38.2423930000	-85.5152870000	(502) 259-2100	http://www.cbandt.com/
+Commonwealth Bank (Preston)	11900 Standiford Plaza Drive		 Louisville	KY	40229	38.0887680000	-85.6670690000	(502) 969-4450	http://www.cbandt.com/
+Commonwealth Bank (St.Matthews)	286 N Hubbards Lane		 Louisville	KY	40207	38.2587300000	-85.6408320000	(502) 259-2120	http://www.cbandt.com/
+Eclipse Bank	3827 Shelbyville Road		 Louisville	KY	40207	38.2531930000	-85.6563520000	(502) 671-4800	http://eclipsebank.com/
+First Federal Savings Bank (Blankenbaker)	301 Blankenbaker Parkway		 Louisville	KY	40243	38.2410070000	-85.5452450000	502-244-1700	http://www.ffsbky.com/
+First Federal Savings Bank (Hillview)	11810 Interchange Drive		 Louisville	KY	40229	38.0955140000	-85.6708170000	(502) 966-9886	http://www.ffsbky.com/
+First Federal Savings Bank (Jeffersontown)	12629 Taylorsville Road		 Louisville	KY	40299	38.1880949000	-85.5172290000	(502) 267-2515	http://www.ffsbky.com/
+First Federal Savings Bank (Hurstbourne)	3650 S Hurstbourne Parkway		 Louisville	KY	40299	38.1950470000	-85.6046320000	502-493-4004	http://www.ffsbky.com/
+PBI Bank (Eastpoint)	2500 Eastpoint Parkway		 Louisville	KY	40223	38.2843019000	-85.5067440000	502-499-4800	https://www.pbibank.com
+PBI Bank (Hillview)	6980 Preston Highway		 Louisville	KY	40219	38.1506437000	-85.6935145000	502-957-2196	https://www.pbibank.com
+Old National Bank (St.Matthews)	4201 Shelbyville Road		 Louisville	KY	40207	38.2520690000	-85.6394890000	(502) 259-7360	https://www.oldnational.com
+Old National Bank (Hurstbourne)	400 N Hurstbourne Parkway		 Louisville	KY	40222	38.2515950000	-85.5799240000	(502) 329-2100	https://www.oldnational.com
+Old National Bank (Brownsboro)	9708 Brownsboro Road		 Louisville	KY	40241	38.3114610000	-85.5680120000	(502) 423-5000	https://www.oldnational.com
+Old National Bank (Main Street)	333 E Main Street		 Louisville	KY	40202	38.2554888000	-85.7460877000	(502) 540-7300	https://www.oldnational.com
+U.S. Bank (Aegon)	400 W Market Street		 Louisville	KY	40202	38.2551470000	-85.7571056000	502-562-6660	https://www.usbank.com
+U.S. Bank (35th Street)	520 N 35th Street		 Louisville	KY	40212	38.2706850000	-85.8056540000	502-772-2301	https://www.usbank.com
+U.S. Bank (Germantown)	1265 Goss Avenue		 Louisville	KY	40217	38.2245825000	-85.7308772000	502-634-8901	https://www.usbank.com
+U.S. Bank (Churchill Downs)	700 Central Avenue		 Louisville	KY	40208	38.2023060000	-85.7700920000	502-637-2245	https://www.usbank.com
+U.S. Bank (New Albany)	2115 E Spring Street		 New Albany	IN	47150	38.2971610000	-85.7993989000	812-941-8368	https://www.usbank.com
+U.S. Bank (Audobon)	3000 Preston Highway		 Louisville	KY	40217	38.2068223000	-85.7375445000	502-637-8747	https://www.usbank.com
+U.S. Bank (Clarksville)	305 E Lewis and Clark Parkway		 Clarksville	IN	47129	38.3104922000	-85.7708827000	(800) 872-2657	https://www.usbank.com
+U.S. Bank (Highlands)	2350 Bardstown Road		 Louisville	KY	40205	38.2234539000	-85.6893429000	(502) 454-0990	https://www.usbank.com
+U.S. Bank (Shively)	4021 Dixie Highway		 Louisville	KY	40216	38.1906320000	-85.8082300000	502-448-5724	https://www.usbank.com
+U.S. Bank (Jeffersonville Meijer)	2750 Allison Lane		 Jeffersonville	IN	47130	38.3252280000	-85.7112660000	(812) 284-0712	https://www.usbank.com
+U.S. Bank (St.Matthews)	3808 Lexington Road		 Louisville	KY	40207	38.2527520000	-85.6569920000	502-895-0595	https://www.usbank.com
+U.S. Bank (New Albany Meijer)	4222 Charlestown Road		 New Albany	IN	47150	38.3490910000	-85.7937050000	812-948-0939	https://www.usbank.com
+U.S. Bank (Bashford Manor Kroger)	3616 Buechel Bypass		 Louisville	KY	40218	38.1982830000	-85.6633870000	502-473-4820	https://www.usbank.com
+U.S. Bank (Dixie Kroger)	5244 Dixie Highway		 Louisville	KY	40216	38.1616630000	-85.8336650000	502-448-5360	https://www.usbank.com
+U.S. Bank (Breckenridge)	3095 Breckenridge Lane		 Louisville	KY	40220	38.2147794000	-85.6273643000	502-451-1923	https://www.usbank.com
+U.S. Bank (Brownsboro)	4951 Brownsboro Road		 Louisville	KY	40222	38.2835810000	-85.6294510000	(502) 426-2300	https://www.usbank.com
+U.S. Bank (Outer Loop Kroger)	4501 Outer Loop		 Louisville	KY	40219	38.1396875000	-85.6794838000	502-962-2465	https://www.usbank.com
+U.S. Bank (Hurstbourne Meijer)	4500 Hurstbourne Crossing Drive		 Louisville	KY	40299	38.1864235000	-85.6045466000	502-493-5938	https://www.usbank.com
+U.S. Bank (Preston Meijer)	9500 Preston Highway		 Louisville	KY	40229	38.1130070000	-85.6797130000	(502) 964-1873	https://www.usbank.com
+U.S. Bank (Hurstbourne)	333 Whittington Parkway		 Louisville	KY	40222	38.2425930000	-85.5776400000	502-562-6314	https://www.usbank.com
+U.S. Bank (Valley Station Meijer)	9905 Dixie Highway		 Louisville	KY	40272	38.1129860000	-85.8627622000	502-937-8965	https://www.usbank.com
+U.S. Bank (Springhurst)	3501 Springhurst Commons Drive		 Louisville	KY	40241	38.2969080000	-85.5606640000	502-326-3704	https://www.usbank.com
+U.S. Bank (Westport Meijer)	4100 Towne Center Drive		 Louisville	KY	40241	38.2986460000	-85.5541110000	(502) 425-4921	https://www.usbank.com
+U.S. Bank (Middletown)	12212 Shelbyville Road		 Louisville	KY	40243	38.2476537000	-85.5290591000	502-244-4446	https://www.usbank.com
+U.S. Bank (Taylorsville Kroger)	12611 Taylorsville Road		 Louisville	KY	40299	38.1888190000	-85.5187510000	502-240-6226	https://www.usbank.com
+Autotruck Financial Credit Union (Main Office)	3611 Newburg Road		 Louisville	KY	40218	38.1877900000	-85.6679840000	(502) 459-8981	http://www.autotruckfcu.org
+Autotruck Financial Credit Union (J. Houston Reinle Office)	13210 O'Bannon Station Way		 Louisville	KY	40223	38.2817549000	-85.5145050000	(502) 244-2272	http://www.autotruckfcu.org
+L&N Federal Credit Union (Southern)	4700 Southern Parkway		 Louisville	KY	40214	38.1816050000	-85.7696630000	(502) 368-5858	http://www.lnfcu.com
+L&N Federal Credit Union (Breckenridge)	3099 Breckenridge Lane		 Louisville	KY	40220	38.2147091000	-85.6273825000	(502) 368-5858	http://www.lnfcu.com
+L&N Federal Credit Union (Dixie)	7412 Dixie Highway		 Louisville	KY	40258	38.1431941000	-85.8398534000	(502) 368-5858	http://www.lnfcu.com
+L&N Federal Credit Union (Middletown Walmart)	12981 Shelbyville Road		 Louisivlle	KY	40243	38.2463980000	-85.5125670000	(502) 368-5858	http://www.lnfcu.com
+L&N Federal Credit Union (Downtown)	200 W Chestnut Street		 Louisville	KY	40202	38.2483080000	-85.7548850000	(502) 368-5858	http://www.lnfcu.com
+L&N Federal Credit Union (Smyrna)	9201 Smyrna Parkway		 Lousiville	KY	40229	38.1145870000	-85.6437280000	(502) 368-5858	http://www.lnfcu.com
+L&N Federal Credit Union (Brownsboro)	9731 Von Allmen Court		 Louisville	KY	40241	38.3118920000	-85.5720290000	(502) 368-5858	http://www.lnfcu.com
+L&N Federal Credit Union (Jeffersonville)	1450 Veterans Parkway		 Jeffersonville	IN	47130	38.3283546000	-85.7363379000	(502) 368-5858	http://www.lnfcu.com
+Park Community Federal Credit Union (Fern Valley)	6101 Fern Valley Road		 Louisville	KY	40228	38.1577140000	-85.6477040000	(502) 968-3681	https://www.parkcommunity.com/
+Park Community Federal Credit Union (Highlands)	2443 Bardstown Road		 Louisville	KY	40205	38.2237398000	-85.6869573000	(502) 968-3681	https://www.parkcommunity.com/
+Park Community Federal Credit Union (West Market)	515 W Market Street		 Louisville	KY	40202	38.2558960000	-85.7591060000	(502) 968-3681	https://www.parkcommunity.com/
+Park Community Federal Credit Union (Goldsmith)	2221 Goldsmith Lane		 Louisville	KY	40218	38.2099850000	-85.6671940000	(502) 968-3681	https://www.parkcommunity.com/
+Park Community Federal Credit Union (Blankenbaker)	2501 Blankenbaker Parkway		 Louisville	KY	40299	38.2098997000	-85.5379647000	(502) 968-3681	https://www.parkcommunity.com/
+Park Community Federal Credit Union (Dixie)	7521 Dixie Highway		 Louisville	KY	40258	38.1415590000	-85.8395479000	(502) 968-3681	https://www.parkcommunity.com/
+Park Community Federal Credit Union (Hillview)	134 Dr Arla Way		 Louisville	KY	40229	38.0701839000	-85.6721731000	(502) 968-3681	https://www.parkcommunity.com/

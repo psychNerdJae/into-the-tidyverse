@@ -1,10 +1,10 @@
 ---
 title: "Session 2: Installing software"
 author: "Jae-Young Son"
-date: "Last updated 10/25/2020"
 output:
   html_document:
     code_folding: show
+    toc: TRUE
     toc_float: TRUE
 ---
 
@@ -12,6 +12,8 @@ output:
 library(knitr)
 library(here)
 ```
+
+This document was most recently knit on `r Sys.Date()`.
 
 # Introduction
 
@@ -23,9 +25,9 @@ In today's session, you'll install all of the software needed to follow along wi
 
 The first thing you'll need to do is to [install R](https://cran.r-project.org/) from CRAN (Comprehensive R Archive Network).
 
-This will install the R programming language, some essential packages, and a text-based console that might remind you of an old-school terminal window (see below).
+This will install the R programming language, some essential libraries, and a text-based console that might remind you of an old-school terminal window (see below).
 
-`r include_graphics(here("Markdown", "images", "session 2-1 R console.png"))`
+`r include_graphics(here("Code", "images", "session 2-1 R console.png"))`
 
 
 # Install RStudio
@@ -38,7 +40,7 @@ You'll immediately note that you have a lot more tools at your disposal. The ima
 3. Variable Viewer: When you start loading, creating, and manipulating data, you'll see it here.
 4. Everything Else: I primarily use this panel to look at plots, or to look at the help documentation for functions I'm using.
 
-`r include_graphics(here("Markdown", "images", "session 2-2 RStudio annotated.png"))`
+`r include_graphics(here("Code", "images", "session 2-2 RStudio annotated.png"))`
 
 
 ## Set up RStudio
@@ -46,9 +48,9 @@ You'll immediately note that you have a lot more tools at your disposal. The ima
 Open up RStudio and then open up `Preferences`. Find the "Workspace" settings. Make sure the checkbox is *de-selected* for "Restore .Rdata into workspace at startup". Specify *never* as the option for "Save workspace to .Rdata on exit". This will ensure that every time you open up RStudio, you start out with a clean working environment. You'd be amazed at how many problems can be prevented by doing this.
 
 
-## Install R packages
+## Install R libraries
 
-You'll need to install the following R packages. Copy/paste the following code into the console window, then press enter to run it. We may need to install other packages in the future, but these ones are so useful that I use them in virtually every project.
+You'll need to install the following R libraries. Copy/paste the following code into the console window, then press enter to run it. We may need to install other libraries in the future, but these ones are so useful that I use them in virtually every project.
 
 ```{r eval = FALSE}
 install.packages("tidyverse")
@@ -90,7 +92,7 @@ You'll note that when you try to commit new changes for the first time, you'll b
 
 What if I make a change to my repository that you want to synchronize with your fork? For example, I could add more files to my repository as I develop new workshop materials, which you want to download. Since my repository is the original that your fork copies, my repository is known as the `upstream` (since it's upstream in the timeline). You can always check to see if there are changes in the upstream by clicking on `Current Branch` and seeing whether there's an option for `upstream/master` (see image below). If you don't, that means there are no new commits in my version of the repository.
 
-`r include_graphics(here("Markdown", "images", "session 2-3 upstream.png"))`
+`r include_graphics(here("Code", "images", "session 2-3 upstream.png"))`
 
 If you see `upstream/master` in the list, you can then click `Choose a branch to merge into master` >> `upstream/master` >> `Merge upstream/master into master`. That will automatically take my upstream version of the repository, and merge new commits into your downstream (forked) version of the repository.
 
