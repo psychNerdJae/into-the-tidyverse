@@ -15,14 +15,17 @@ A little about me: I'm neither a programmer nor a statistician by training. I'm 
 Files in the parent folder:
 Whenever you want to engage with these workshops, remember to first double-click on `into-the-tidyverse.Rproj` first. This opens up a new R session (so that work you're doing for this project doesn't disturb whatever work you might be doing for other R projects).
 
+Tutorials:
+This is where you can find the HTML files containing all tutorials. Each one features a self-contained lesson on a particular topic.
+
 Sandbox:
-For reasons that are explained in more detail in *Sandbox/readme.txt*, you should never, ever, ever modify anything that's in any other folder. Seriously, under most circumstances, there should be no reason for you to ever navigate into these directories or open these files. If you're wanting to save scripts, plots, whatever, you should do it in the Sandbox.
+For reasons that are explained in more detail in `Sandbox/readme.md`, you should never, ever, ever modify anything that's in any other folder. Seriously, under most circumstances, there should be no reason for you to ever navigate into these directories or open these files. If you're wanting to save scripts, plots, whatever, you should do it in the Sandbox.
 
 Code:
-I'm providing all of the code from the videos in the Code folder. These scripts are provided primarily for folks with visual impairments, who would find it useful to have the raw text for accessibility reasons. By and large, I do NOT want any other group of people looking at this code. Why? Because most of your learning occurs when you make (and correct) mistakes, and you can only make mistakes if you're trying things out from scratch. You can't make mistakes if you're simply running someone else's code, or just copy/pasting code.
+I'm providing all of the `R Markdown` code from the videos in the Code folder. These scripts are provided primarily for folks with visual impairments, who would find it useful to have the text for accessibility reasons. By and large, I do **NOT** want any other group of people looking at this code. Why? Because most of your learning occurs when you make (and correct) mistakes, and you can only make mistakes if you're trying things out from scratch. You can't make mistakes if you're simply running someone else's code, or just copy/pasting code.
 
 Data:
-We will be using a diverse range of datasets from a variety of sources. There are times when it will make sense for you to directly download the data from the source (such as timeseries data on covid19, which is updated on a daily basis), but otherwise, the datasets will be provided in the Data folder. When applicable/available, the URLs will be documented in the relevant scripts.
+We will be using a diverse range of datasets from a variety of sources. There are times when it will make sense for you to directly download the data from the source (such as timeseries data on covid19, which is updated on a daily basis), but otherwise, the datasets will be provided in the Data folder. When applicable/available, the URL to the original dataset will be documented in the relevant scripts.
 
 Output:
 Sometimes, there will be some kind of output we want to save to our hard drive (like a plot or table). These will be saved in the Output folder.
