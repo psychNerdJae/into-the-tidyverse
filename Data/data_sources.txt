@@ -1,0 +1,19 @@
+Data sources (in approx order of introduction/use in tutorials):
+
+2020 property tax rolls from the city of Providence, RI
+https://data.providenceri.gov/Neighborhoods/2020-Property-Tax-Roll/y9h5-fefu
+
+covid19 case tracker from Johns Hopkins CSSEGIS
+https://github.com/CSSEGISandData/COVID-19
+
+Bank locations in Louisville, KY
+https://catalog.data.gov/dataset/bank-branches-data/resource/769ef747-f5b8-4154-846e-2f347d45a7ce
+
+Urban-rural classification scheme from CDC NCHS
+https://www.cdc.gov/nchs/data_access/urban_rural.htm
+
+County-level election returns from MIT Election Lab
+https://electionlab.mit.edu/data
+
+National incarceration trends from Vera Institute of Justice
+https://github.com/vera-institute/incarceration-trends
