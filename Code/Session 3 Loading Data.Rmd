@@ -38,9 +38,11 @@ If it helps, you can think of a library in a pretty literal sense. One reason wh
 
 Last time, you installed a few libraries that are particularly important. Here's a reminder of what we did (don't re-install these!):
 
-`install.packages("tidyverse")`  
-`install.packages("here")`  
-`install.packages("janitor")`
+```{r eval = FALSE}
+install.packages("tidyverse")
+install.packages("here")
+install.packages("janitor")
+```
 
 We're going to install one new library, which we'll use in just a moment. You should type this into your console, rather than your script.
 
