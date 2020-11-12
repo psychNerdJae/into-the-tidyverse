@@ -17,3 +17,6 @@ https://electionlab.mit.edu/data
 
 National incarceration trends from Vera Institute of Justice
 https://github.com/vera-institute/incarceration-trends
+
+Halloween candy preferences
+https://www.scq.ubc.ca/so-much-candy-data-seriously/

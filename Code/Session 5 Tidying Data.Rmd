@@ -1,0 +1,235 @@
+---
+title: "Session 5: Tidying data"
+author: "Jae-Young Son"
+output:
+  html_document:
+    code_folding: show
+    toc: TRUE
+    toc_float: TRUE
+---
+
+This document was most recently knit on `r Sys.Date()`.
+
+# Introduction
+
+## A digression
+
+So far, we have not stopped to think about where the name `tidyverse` comes from. The core philosophical belief underlying the tidyverse is that (tabular) data can always be formatted in a **tidy** manner. As long as data are kept in this tidy format, you can then use the same **grammar** in all of your functions, because all of your functions expect the same data format.
+
+Because you've been using the tidy format this whole time, you might not realize what a revolutionary idea this is. Prior to the advent of the tidyverse, it was often difficult to guess what functions expected which data formats. For example, R's built-in function for performing a t-test expects two numeric vectors, but is quite flexible about *how* you feed it those vectors. You could have two numeric vectors saved in two different variables. You could have a 2xN matrix, and at runtime, you call each of the two matrix rows. If you have data saved in a dataframe, you could pass each of the columns individually as each of the arguments. Or maybe you have a grouping variable that you can pass to the function if you're using the formula interface. And if you want to follow-up by running a different statistical test (like an ANOVA or regression), you have to then reformat your data to match the expected input of *those* functions. My point is simple: flexibility is not always a good thing.
+
+On the other hand, if you always expect your data to be formatted in a consistent way, you can then build functions that all play nice with each other, because they all expect (and output) data in that format. If you find yourself not understanding (or caring), that's okay: the point to appreciate is that boring things like data formatting can make a huge difference for how quickly/efficiently you're able to wrangle data.
+
+## Tidy data
+
+Straight from the [tidyr website](https://tidyr.tidyverse.org/), the definition of tidy data is that:
+1. Every column is a variable.
+2. Every row is an observation.
+3. Every cell is a single value.
+
+These ideas should feel familiar to you, because we spent a lot of time in the `dplyr` tutorial thinking about manipulating variables and observations. In today's tutorial, we'll consider data formats that are *not* tidy, and learn how to wrangle them so that they comply with the tidy format.
+
+Before we start, you should create a new R script inside the `Sandbox` folder, where you'll write code corresponding to this tutorial. Please make sure to *save it* in that folder (it's fine that you're saving an empty script for now, you'll fill it in as we go).
+
+# tidyr
+
+In the last tutorial, you might've felt like your head was exploding from all of the new `dplyr` functions you were learning. You'll be glad to learn that, in comparison, this tutorial is a reprieve. We are only covering the use of four fundamental `tidyr` functions, which are (more-or-less) mirrors of each other:
+1. `pivot_longer`: take wide data and make it longer
+2. `pivot_wider`: take long data and make it wider
+3. `separate`: separating a single cell into multiple columns
+4. `unite`: smooshing multiple columns into a single cell
+
+## pivot_longer
+
+Here comes one of my famous digressions, but I promise it's relevant. Or, at the very least, it'll give you some insight into why there are different ways of formatting data in the first place.
+
+In modern statistics, regression is one of the most powerful standard techniques at your disposal for analyzing data. Many of the "classic" statistical tests you might be familiar with (binomial test, chi-square, correlations, t-tests, ANOVA) [are all secretly linear models](https://lindeloev.github.io/tests-as-linear/), and are (arguably) superseded by regression. Regression requires your data to be in a tidy format, and you'll see this for yourself in the second half of this workshop when we start learning some statistics.
+
+However, regression is also a computationally-intensive technique, and is (often!) impossible to do by hand. So when the statisticians of the past were developing what we now think of as the "classic" techniques, they were having to devise tests that were simple enough to do by hand, or on much less powerful computers. Much of the time, this led to data being represented in a **wide** format. To get a sense for what this format looks like, let's load in some data about song rankings in the Billboard Top 100 in the year 2000. Instead of using `readr`, we'll use one of `tidyr`'s built-in datasets, `billboard`.
+
+You'll note that each row represents a single track, and that there are multiple observations per row (wk1, wk2, wk3...). This is why this format is known as the *wide* format, because a single row can extend widely (i.e., there are 76 weeks per row in this dataset!).
+
+```{r}
+library(tidyr)
+library(dplyr)
+
+billboard %>%
+  slice(1:10)
+```
+
+So what would it take for this data to be formatted in a tidy format? Well, we'd have to take weeks 1-76, and we'd have to **pivot** them to make them **longer**. Lo and behold, we have a function `tidyr::pivot_longer` that will do this for us. Here's an example.
+
+I want you to notice something. Scroll back up to the last output, and tell me what the numbers mean in the `wk1` column. If your response was to throw your hands in the air and say, "How am I supposed to know?", then you got the point. When data are not formatted in a tidy way, it's not clear what variables are being encoded. In this case, those numbers represent rankings on the Billboard Top 100. When we pivoted the data to be longer, we made the dataset tidy, and that forced us to be explicit about what variable each column represents. Now, every column is a variable, every row is an observation (i.e., a single datapoint), and every cell contains a single value.
+
+```{r}
+billboard %>%
+  pivot_longer(cols = starts_with("wk"),
+               names_to = "week",
+               values_to = "ranking") %>%
+  drop_na() %>%
+  group_by(track) %>%
+  slice(1:5) %>%
+  ungroup() %>%
+  slice(1:30)
+```
+
+The only other thing to note: I used `tidyr::drop_na` to drop every row from the dataset that contained an `NA` (i.e., missing data). If you scroll up to the very first view of the dataset, you'll see that the track *"The Hardest Part of Breaking Up (Is Getting Back Your Stuff)"* by the artist *2ge+her* only made it 3 weeks in the Top 100 before it fell off. For the remaining weeks, there are `NA`s. Once your data are in tidy format, there's not necessarily a need to keep all of those observations (after all, they represent missing data), so it's safe to drop them. Just to give you a sense for what it would look like if we kept them, try running the following code.
+
+```{r}
+billboard %>%
+  filter(artist == "2Ge+her") %>%
+  pivot_longer(cols = starts_with("wk"),
+             names_to = "week",
+             values_to = "ranking")
+```
+
+## pivot_wider
+
+In the course of data wrangling, you sometimes find yourself in the odd position of working with data that sorta-kinda tidy, but that ultimately feels *excessively* long. To illustrate, let's look at the built-in dataset `us_rent_income`, which gives us the 2017 median yearly income and monthly rent for various locales in the USA. The column `estimate` tells you what the median estimate is, and the column `moe` tells you what the 90% margin of error is.
+
+Here's an obvious question you might have: in each state, what proportion of a person's income is being spent on rent? To answer this question, you'd want to multiply the monthly rent by 12, the divide the yearly rent by the yearly income to get a proportion. But, you'll notice that this data format isn't particularly conducive to manipulating the data in the way we want.
+
+```{r}
+us_rent_income
+```
+
+We need to pivot this dataframe so that we make it wider, such that there's a column for income estimate, rent estimate, income MOE, and rent MOE. This is criminally easy to do using `tidyr::pivot_wider`.
+
+```{r}
+us_rent_income %>%
+  pivot_wider(names_from = "variable", values_from = c("estimate", "moe"))
+```
+
+And now that we have our data in this tidy format, we can easily manipulate it using our `dplyr` tools. This analysis shows that the cheapest places to live in the US are all in the Midwest.
+
+```{r}
+us_rent_income %>%
+  pivot_wider(names_from = "variable", values_from = c("estimate", "moe")) %>%
+  select(locale = NAME, estimate_income, estimate_rent) %>%
+  group_by(locale) %>%
+  summarise(p_income_spent_on_rent = 12*estimate_rent / estimate_income) %>%
+  arrange(p_income_spent_on_rent)
+```
+
+## separate
+
+In psychology, it is very common to collect data using the Qualtrics online survey platform. Unfortunately, Qualtrics only outputs data in wide format, and so researchers have to encode all information about the experimental condition using obscure codes that look like this: `theft_lo_group4_2_1`. This is an actual column from one of my past datasets, where I investigated the [role of conformity in swaying people's moral judgments](https://www.nature.com/articles/s41598-019-48050-2) ([full datasets and code available at OSF](https://osf.io/8ka47/)).
+
+Let's open up one of these datasets now. You can find this in `Data/JustCon/JustCon5_TPP_Order1.csv`. There are a *lot* of duplicate column names in this dataset, so you're going to see a really lengthy warning message letting you know about how `readr:read_csv` renamed columns to avoid data loss.
+
+So here's the rundown of the experiment: I showed people stories where someone got robbed or physically assaulted. The crime was either low-intensity (not involving deadly weapons) or high-intensity (involving weapons like knives or guns). Your job was to make a moral judgment about how much the perpetrator deserved to be punished for their crime. As you made your judgment, you (supposedly) saw what judgments other people made. For each unique combination of these parameters, you read (and rated) two different stories.
+
+```{r warning=FALSE}
+library(readr)
+library(here)
+
+conformity <- here("Data", "JustCon5_TPP_Order1.csv") %>%
+  read_csv() %>%
+  select(sub_id = mTurkCode,
+         starts_with("assault"),
+         starts_with("theft")) %>%
+  # Don't worry about this for the time being
+  slice(-1) %>%
+  type_convert()
+
+conformity
+```
+
+There are several reasons why this dataset, in its original form, is not tidy. First, each row does not represent a unique observation. Second, each column does not encode a unique variable. So let's try our new trick of making this wide-format dataset longer.
+
+```{r}
+conformity %>%
+  # A neat trick: the cols specification tells tidyr to pivot everything *except* for sub_id
+  pivot_longer(cols = -sub_id,
+               names_to = "condition",
+               values_to = "rating")
+```
+
+This gets us one step closer. But, we can see that we've now violated the last principle of tidy data: each cell of `condition` does not contain a single value, but instead contains multiple pieces of information bunched together. This is where `tidyr::separate` comes into play. In short, this function looks for common characters that are used to separate multiple pieces of information (e.g., `_`, `-`, `.`, etc), then separates each piece of information into its own columns. Let's see how it works.
+
+```{r}
+conformity %>%
+  pivot_longer(cols = -sub_id,
+               names_to = "condition",
+               values_to = "rating") %>%
+  separate(col = condition,
+           into = c("crime_type", "crime_severity", "n_endorsing_punishment",
+                    "repetition_number", "qualtrics_junk")) %>%
+  select(-qualtrics_junk)
+```
+
+Just like that, we have a nice tidy dataframe where every column is a variable, every row is an observation, and every cell contains only one value. Beautiful.
+
+## unite
+
+Sometimes, you want to smoosh different columns together. To illustrate, let's pull up a dataset we looked at last time: county-level presidential election returns. To refresh our memory of what it looks like, let's take a look now.
+
+```{r}
+elections <- here("Data", "countypres_2000-2016.csv") %>%
+  read_csv() %>%
+  select(year, county, state, candidate, party, candidatevotes, totalvotes)
+
+elections
+```
+
+We might find ourselves in a situation where we want to combine the columns containing information about county and state. Perhaps to avoid ambiguity about Dallas County in the states Alabama, Arkansas, Iowa, Missouri, and Texas. We can do this using `tidyr::unite`.
+
+```{r}
+elections %>%
+  unite(col = "location",
+        county, state)
+```
+
+We can see that by default, this function uses an underscore to separate information that was previously part of separate columns. We can change this behavior pretty easily using an additional argument.
+
+```{r}
+elections %>%
+  unite(col = "location",
+        county, state,
+        sep = ", ")
+```
+
+# Bonus: janitor
+
+How you name your variables/columns (technically) has nothing to do with whether your data are formatted in a tidy fashion. However, the tidyverse-preferred way of formatting variable names is to use `all_lowercase_with_underscores`. Maintaining a standard format helps you to resolve uncertainty about whether your variables are going to be formatted as `camelCaseFormat`, or `Using.Dots.Instead.Of.Underscores`, or etc.
+
+However, it is unfortunately rare to find pretty variable names in the wild. To illustrate, let's revisit a dataset from a few tutorials ago, about bank branches in Louisville, KY.
+
+```{r}
+banks <- here("Data", "BankBranchesData.txt") %>%
+  read_tsv()
+
+banks
+```
+
+We can see that this dataset uses `CamelCase` formatting, which is actually not awful in the grand scheme of things. But, we want to convert them into a tidyverse-compliant format, and we can easily do this using the function `janitor::clean_names`.
+
+```{r}
+library(janitor)
+
+banks %>%
+  clean_names()
+```
+
+How about in extreme cases, where the variable names are *really* screwy? Let's pull in a fun dataset that surveyed people's preferences for different kinds of Halloween candy, from the [Science Creative Quarterly](https://www.scq.ubc.ca/so-much-candy-data-seriously/) at the University of British Columbia. I don't have to do much convincing to show you that these variable names are awful. In fact, they are so bad that R literally will not let me display them. So you're going to have to just open up that dataframe yourself (by clicking on `candy` in your Environment pane, or typing `View(candy)` into your console).
+
+```{r}
+candy <- here("Data", "candyhierarchy2017.csv") %>%
+  read_csv()
+```
+
+But, we can see that `janitor` handles even these awful variable names with elegance. Amazing.
+
+```{r}
+candy %>%
+  clean_names()
+```
+
+# Exercises
+
+A general note: these are hard exercises, and you won't necessarily find the answers in this tutorial. Learning to Google (or, if you really care about privacy, [DuckDuckGo](https://duckduckgo.com/)) answers to your coding questions is itself an essential skill. So, be patient with yourself. Struggling through these exercises will help you understand this material at a deeper level.
+
+1. While we've got the `candy` dataset on our minds, go ahead and tidy that up so that each row represents one rating about one candy.
+
+2. Let's return to the Johns Hopkins covid dataset. You will first need to read it into a variable named `covid`. Then, tidy it. Use `janitor` to create tidy variable names. Use `tidyr` to re-format the data as a tidy longform dataset. You may not want to perform those operations in that exact order. Why?
+
