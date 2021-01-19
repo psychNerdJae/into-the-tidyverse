@@ -48,34 +48,44 @@ Sometimes, there will be some kind of output we want to save to our hard drive (
 5. Tidying data.
 	- Introduction to the "tidy" philosophy (after which the `tidyverse` is named)
 	- More practice using `dplyr` and learning some handy `tidyr` functions.
-6. Plotting data.
+6. Plotting data I.
 	- Understanding the grammar of graphics.
-	- Using `ggplot` to make beautiful plots.
-7. The integrated tidyverse and beyond.
-	- What does it mean for a non `tidyverse` library to be tidy-friendly?
-8. Special topics.
+	- Using `ggplot2` to make beautiful plots.
+	- Aesthetics, mappings, and geometries
+7. Plotting data II.
+	- Additional `ggplot2` features.
+	- Labels, facets, scales and legends, coordinates, and themes.
+8. Data types, revisited.
 	- Why do `stringr`, `forcats`, and `lubridate` exist?
 	- Revisiting `readr`, and introducing `haven` and `readxl`.
-9. An introduction to statistical modeling.
+9. Iteration.
+	- The DIE principle: Duplication Is Evil.
+	- Serial operations.
+	- Vectorized operations.
+	- A very cursory introduction to functional programming using `purrr`.
+10. The integrated tidyverse and beyond.
+	- What does it mean for a non-`tidyverse` library to be tidy-friendly?
+	- What are some challenges in using libraries that are *not* tidy-friendly?
+11. An introduction to statistical modeling.
 	- The paradox of learning from first principles.
 	- My approach: learning statistics backwards.
-10. Simple regression.
+12. Simple regression.
 	- Testing mean differences using the t-test.
 	- Testing association strengths using correlations.
 	- Surprise! These techniques are all secretly simple regression.
-11. Multiple regression I.
+13. Multiple regression I.
 	- The problem of shared variance.
 	- Semi-partial estimates.
 	- Interpreting model estimates.
-12. Multiple regression II.
+14. Multiple regression II.
 	- Why categorical variables make analysis more complicated.
 	- Contrasts.
-13. Multiple regression III.
+15. Multiple regression III.
 	- Interactions.
-14. Generalized linear models.
+16. Generalized linear models.
 	- Distributional assumptions.
 	- Logistic and Poisson regression.
-15. Multilevel modeling.
+17. Multilevel modeling.
 	- The problem of repeated measures.
 	- The logic of mixed-effects regression.
 	- Introduction to `lme4`.
