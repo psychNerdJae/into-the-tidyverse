@@ -1,0 +1,52 @@
+﻿state,region,division
+Connecticut,Northeast,New England
+Maine,Northeast,New England
+Massachusetts,Northeast,New England
+New Hampshire,Northeast,New England
+Rhode Island,Northeast,New England
+Vermont,Northeast,New England
+New Jersey,Northeast,Middle Atlantic
+New York,Northeast,Middle Atlantic
+Pennsylvania,Northeast,Middle Atlantic
+Indiana,Midwest,East North Central
+Illinois,Midwest,East North Central
+Michigan,Midwest,East North Central
+Ohio,Midwest,East North Central
+Wisconsin,Midwest,East North Central
+Iowa,Midwest,West North Central
+Kansas,Midwest,West North Central
+Minnesota,Midwest,West North Central
+Missouri,Midwest,West North Central
+Nebraska,Midwest,West North Central
+North Dakota,Midwest,West North Central
+South Dakota,Midwest,West North Central
+Delaware,South,South Atlantic
+District of Columbia,South,South Atlantic
+Florida,South,South Atlantic
+Georgia,South,South Atlantic
+Maryland,South,South Atlantic
+North Carolina,South,South Atlantic
+South Carolina,South,South Atlantic
+Virginia,South,South Atlantic
+West Virginia,South,South Atlantic
+Alabama,South,East South Central
+Kentucky,South,East South Central
+Mississippi,South,East South Central
+Tennessee,South,East South Central
+Arkansas,South,West South Central
+Louisiana,South,West South Central
+Oklahoma,South,West South Central
+Texas,South,West South Central
+Arizona,West,Mountain
+Colorado,West,Mountain
+Idaho,West,Mountain
+New Mexico,West,Mountain
+Montana,West,Mountain
+Utah,West,Mountain
+Nevada,West,Mountain
+Wyoming,West,Mountain
+Alaska,West,Pacific
+California,West,Pacific
+Hawaii,West,Pacific
+Oregon,West,Pacific
+Washington,West,Pacific

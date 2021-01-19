@@ -20,3 +20,9 @@ https://github.com/vera-institute/incarceration-trends
 
 Halloween candy preferences
 https://www.scq.ubc.ca/so-much-candy-data-seriously/
+
+2010-2019 population estimates from the US Census (lightly modified from original)
+https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html
+
+State classifications into regions and divisions from the US Census
+Adapted from: https://www2.census.gov/geo/pdfs/maps-data/maps/reference/us_regdiv.pdf
