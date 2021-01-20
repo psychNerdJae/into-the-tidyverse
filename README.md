@@ -1,34 +1,26 @@
 # Into the Tidyverse
- 
-## Introduction
 
-This repository contains learning materials for R/Tidyverse.
-
-Generally, I developed these materials with college undergraduates (or comparable) in mind as a target audience. Specifically, these materials were created to help train undergraduate research assistants in the Brown Dept. of Cognitive, Linguistic, and Psychological Sciences (CLPS), as well as students in an introductory psychology class.
-
-I assume you have no prior programming or heavy stats experience. To the extent you have either, that's great, and you may find it useful to follow along as review.
-
-A little about me: I'm neither a programmer nor a statistician by training. I'm an experimental psychologist who twice failed introductory computer science classes in undergrad, and who had to take what was essentially the same introductory stats class three times in order to (finally) understand any of it. This is to say that, if you feel any code-phobia/stats-phobia, I can empathize with you. There is definitely a learning curve to both code and stats, and there are no easy shortcuts for learning either. But, I hope that these materials will provide you with enough scaffolding of the fundamental concepts that you can learn to venture out and learn new things on your own.
 
 ## File and folder structure
 
-Files in the parent folder:
-Whenever you want to engage with these workshops, remember to first double-click on `into-the-tidyverse.Rproj` first. This opens up a new R session (so that work you're doing for this project doesn't disturb whatever work you might be doing for other R projects).
+- Files in the parent folder: Whenever you want to engage with these workshops, remember to first double-click on `into-the-tidyverse.Rproj` first. This opens up a new R session (so that work you're doing for this project doesn't disturb whatever work you might be doing for other R projects).
 
-Tutorials:
-This is where you can find the HTML files containing all tutorials. Each one features a self-contained lesson on a particular topic.
+- Tutorials: This is where you can find the HTML files containing all tutorials. Each one features a self-contained lesson on a particular topic.
 
-Sandbox:
-For reasons that are explained in more detail in `Sandbox/readme.md`, you should never, ever, ever modify anything that's in any other folder. Seriously, under most circumstances, there should be no reason for you to ever navigate into these directories or open these files. If you're wanting to save scripts, plots, whatever, you should do it in the Sandbox.
+- Sandbox: This is the only folder you should be modifying. You should never, ever, ever modify anything that's in any other folder. Seriously, under most circumstances, there should be no reason for you to ever navigate into these directories or open these files. If you're wanting to save scripts, plots, whatever, you should do it in the Sandbox. Make sure to follow these three simple rules to make sure everything goes smoothly:
 
-Code:
-I'm providing all of the `R Markdown` code from the videos in the Code folder. These scripts are provided primarily for folks with visual impairments, who would find it useful to have the text for accessibility reasons. By and large, I do **NOT** want any other group of people looking at this code. Why? Because most of your learning occurs when you make (and correct) mistakes, and you can only make mistakes if you're trying things out from scratch. You can't make mistakes if you're simply running someone else's code, or just copy/pasting code.
+	1. Basically, don't touch anything in the Code and Data folders, and you'll be alright. For those of you following along in realtime (i.e., I haven't finished writing/developing all of the materials yet), this lets you avoid merge conflicts. In short, a merge conflict emerges when my version of the file looks different from your version of the same file. So if you take my code and you use it to play around by adding/deleting code, your file is now different from my file. When you try to "sync" new materials from my repository to your forked clone, this creates a merge conflict that you're forced to resolve before you're allowed to download my new materials.
+	
+	2. Any time you write new code, do it in this Sandbox folder. The point of a sandbox is that you can do anything you want, and the (potentially destructive) consequences of your actions will never leave the sandbox. This is important because I'm going to encourage you very, very, very strongly never to simply run the existing scripts in the Code folder (or equivalently, simply copy/pasting existing code). So when you're typing code from scratch and need a place to save your scripts, save them in the Sandbox.
+	
+	3. On that note, you should be typing code from scratch. This sandbox should be full of code, whether it works or not. You learn a lot from typing things from scratch, especially when you're a beginner. This is because you'll inevitably type things incorrectly when you do it from scratch, and then you'll have to self-diagnose why your code doesn't work. That is invaluable experience for learning how to code. And it will also help with your muscle memory. It takes virtually zero time for me to write a pipe (%>%) because I have typed thousands and thousands and thousands of pipes. You cannot get good at writing code quickly without building muscle memory. If you simply run existing code, or copy/paste existing code, you are hurting your own learning. There are no shortcuts to learning code. You must do it the hard way.
 
-Data:
-We will be using a diverse range of datasets from a variety of sources. There are times when it will make sense for you to directly download the data from the source (such as timeseries data on covid19, which is updated on a daily basis), but otherwise, the datasets will be provided in the Data folder. When applicable/available, the URL to the original dataset will be documented in the relevant scripts.
+- Code: I'm providing all of the `R Markdown` code from the videos in the Code folder. These scripts are provided primarily for folks with visual impairments, who would find it useful to have the text for accessibility reasons. By and large, I do **NOT** want any other group of people looking at this code. Why? Because most of your learning occurs when you make (and correct) mistakes, and you can only make mistakes if you're trying things out from scratch. You can't make mistakes if you're simply running someone else's code, or just copy/pasting code.
 
-Output:
-Sometimes, there will be some kind of output we want to save to our hard drive (like a plot or table). These will be saved in the Output folder.
+- Data: We will be using a diverse range of datasets from a variety of sources. There are times when it will make sense for you to directly download the data from the source (such as timeseries data on covid19, which is updated on a daily basis), but otherwise, the datasets will be provided in the Data folder. When applicable/available, the URL to the original dataset will be documented in the relevant scripts.
+
+- Output: Sometimes, there'll be some kind of output I want to save to your hard drive (like a plot or table), so that you have a sense for what your output ought to look like. These will be saved in the Output folder. Anytime you have some output, you should save that to the Sandbox instead.
+
 
 ## Session descriptions
 
@@ -89,6 +81,7 @@ Sometimes, there will be some kind of output we want to save to our hard drive (
 	- The problem of repeated measures.
 	- The logic of mixed-effects regression.
 	- Introduction to `lme4`.
+
 
 ## Useful resources
 1. [R for Data Science](https://r4ds.had.co.nz/)
