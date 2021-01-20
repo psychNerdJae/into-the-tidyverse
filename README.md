@@ -28,60 +28,54 @@ For details on how to install software and download the tutorials, visit: [https
 
 ## Session descriptions
 
-1. A motivating example for why you might want to learn R or Tidyverse.
-2. Tech setup.
-	- Downloading R and RStudio. Installing relevant R libraries.
-	- Creating a GitHub account and downloading GitHub Desktop. Creating a forked clone of the GitHub repository for this workshop.
-	- Understanding (at a basic level) what the fork that last sentence means.
-	- If you're following along with this as I'm creating new materials in realtime, how to "sync" new materials so that you have the most recent version of my materials on your computer, and how to avoid creating headaches for yourself.
-3. Reading data.
+1. Reading data.
 	- Using `readr` to get data into R.
 	- Understanding dataframes and their close cousins, the `tibble`.
 	- Datatypes.
-4. Manipulating data.
+2. Manipulating data.
 	- Getting familiar with functions.
 	- An introduction to using `dplyr` to manipulate data.
-5. Tidying data.
+3. Tidying data.
 	- Introduction to the "tidy" philosophy (after which the `tidyverse` is named)
 	- More practice using `dplyr` and learning some handy `tidyr` functions.
-6. Plotting data I.
+4. Plotting data I.
 	- Understanding the grammar of graphics.
 	- Using `ggplot2` to make beautiful plots.
 	- Aesthetics, mappings, and geometries
-7. Plotting data II.
+5. Plotting data II.
 	- Additional `ggplot2` features.
 	- Labels, facets, scales and legends, coordinates, and themes.
-8. Data types, revisited.
+6. Data types, revisited.
 	- Why do `stringr`, `forcats`, and `lubridate` exist?
 	- Revisiting `readr`, and introducing `haven` and `readxl`.
-9. Iteration.
+7. Iteration.
 	- The DIE principle: Duplication Is Evil.
 	- Serial operations.
 	- Vectorized operations.
 	- A very cursory introduction to functional programming using `purrr`.
-10. The integrated tidyverse and beyond.
+8. The integrated tidyverse and beyond.
 	- What does it mean for a non-`tidyverse` library to be tidy-friendly?
 	- What are some challenges in using libraries that are *not* tidy-friendly?
-11. An introduction to statistical modeling.
+9. An introduction to statistical modeling.
 	- The paradox of learning from first principles.
 	- My approach: learning statistics backwards.
-12. Simple regression.
+10. Simple regression.
 	- Testing mean differences using the t-test.
 	- Testing association strengths using correlations.
 	- Surprise! These techniques are all secretly simple regression.
-13. Multiple regression I.
+11. Multiple regression I.
 	- The problem of shared variance.
 	- Semi-partial estimates.
 	- Interpreting model estimates.
-14. Multiple regression II.
+12. Multiple regression II.
 	- Why categorical variables make analysis more complicated.
 	- Contrasts.
-15. Multiple regression III.
+13. Multiple regression III.
 	- Interactions.
-16. Generalized linear models.
+14. Generalized linear models.
 	- Distributional assumptions.
 	- Logistic and Poisson regression.
-17. Multilevel modeling.
+15. Multilevel modeling.
 	- The problem of repeated measures.
 	- The logic of mixed-effects regression.
 	- Introduction to `lme4`.

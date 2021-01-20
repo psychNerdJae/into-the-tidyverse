@@ -1,0 +1,434 @@
+---
+title: "Session 4: Plotting data I"
+author: "Jae-Young Son"
+output:
+  html_document:
+    code_folding: show
+    toc: TRUE
+    toc_float: TRUE
+---
+
+This document was most recently knit on `r Sys.Date()`.
+
+# Introduction
+
+In past tutorials, we've considered that all tidyverse libraries use the same **grammar** for all functions, built on top of the philosophy that having a predictable and uniform format (i.e., tidy data) enables smooth transfer of data from one function to another. Likewise, `ggplot` uses a **grammar of graphics** that allows you to visualize the same data many different ways (`ggplot` = grammar of graphics plot).
+
+Historically, the development of `ggplot2` (2005) preceded the development of other core libraries (e.g., `dplyr` and `tidyr` were released in 2014). For this reason, we'll soon see that the syntax of `ggplot2` is a little bit different from the rest of the tidyverse. But, the underlying grammar is quite similar, and you hopefully won't find it too foreign from what we've been learning so far.
+
+# Mappings and aesthetics
+
+The grammar of graphics starts with the observation that all plots have an x-axis and y-axis, which requires a **mapping** between your data and the axes (i.e., the plural of *axis*, not the sharp tool used to chop wood). This might seem like a trivial insight to you, but it's the first step in realizing that all plots can be understood as mappings between your data and a plotting **aesthetic** (such as the x/y-axis).
+
+Let's return to the Johns Hopkins covid19 dataset as an example. We might be interested in plotting the number of cases over time. So, we already know that we want to map time to the x-axis, and case counts to the y-axis.
+
+To get a sense for what the cleaned dataset looks like before we start working with it in `ggplot`, below are the first 10 rows of the dataset. We see that it's in a tidy format, such that each row represents an observation from each state on each day. For now, we're ignoring county-level information.
+
+```{r message=FALSE}
+library(tidyverse)
+library(lubridate)
+library(janitor)
+library(here)
+
+covid <- here("Data", "time_series_covid19_confirmed_US.csv") %>%
+  read_csv() %>%
+  clean_names() %>%
+  select(-c(uid:fips, country_region:combined_key)) %>%
+  rename(county = admin2, state = province_state) %>%
+  pivot_longer(cols = -c(county, state), names_to = "date", values_to = "cases") %>%
+  mutate(date = str_remove(date, "x"),
+         date = mdy(date)) %>%
+  group_by(state, date) %>%
+  summarise(cases = sum(cases)) %>%
+  ungroup()
+
+covid %>%
+  slice_head(n = 10)
+```
+
+As you can see in the code below, you can pipe your data directly into ggplot, just like all other tidyverse functions. We then supply a mapping using the function `aes` (aesthetics), which tells ggplot that the column `date` should be mapped to the `x`-axis, and the column `cases` should be mapped to the `y`-axis. And what we can immediately appreciate from the output is that the axes are already scaled to our data.
+
+```{r}
+covid %>%
+  ggplot(mapping = aes(x=date, y=cases))
+```
+
+It's quite common to map your data to other aesthetics such as color, fill, transparency, size, linetype, and groupings. We'll return to those aesthetics later. It'd be too confusing/abstract to discuss these without first discussing **geometries**.
+
+# Geometries
+
+What distinguishes a scatterplot from a lineplot? A lineplot from a barplot? You could take a functional approach and say that certain kinds of visualizations are better-suited for certain kinds of data. Let's say that we're interested in two research questions: 1) how covid case counts have changed over time, and 2) whether covid disproportionately affects people from certain racial groups. Conventional wisdom says that lineplots are better for continuous measures (e.g., time), whereas barplots are better for discrete measures (e.g., racial identity).
+
+But it's also true that you *could* plot cases over time using a barplot. It would be a very inefficient visualization because you'd have to drawn a bar for every day in your dataset, but you could do it if you really wanted to. Similarly, it doesn't really make sense to draw a lineplot for racial groups, but there's nothing stopping you from doing so if you're really determined.
+
+So, this example illustrates that the same data can be represented by many different *types* of visualization. In the grammar of graphics, these *types* are known as **geometries**. Without having to modify the mapping between your data and the plot aesthetics (e.g., what goes on the x/y-axes), we could easily swap out a barplot for a lineplot simply by changing what geometry we use to represent the data.
+
+Don't take my word for it, let's prove it. For the sake of simplicity, I'm going to first illustrate this using data only from California. We'll build up to more complex visualizations once we understand the basics.
+
+```{r}
+covid %>%
+  filter(state == "California") %>%
+  ggplot(mapping = aes(x=date, y=cases)) +
+  geom_line()
+```
+
+```{r}
+covid %>%
+  filter(state == "California") %>%
+  ggplot(mapping = aes(x=date, y=cases)) +
+  geom_bar(stat = "identity")
+```
+
+So we can see that by simply swapping out one geometry (`geom_line`) for another (`geom_bar`), we can represent the same data in multiple ways. There are lots of different geometries, which are useful for depicting different aspects of your data, or for different kinds of data. Below, I'll just provide a small sampling of geometries you could use with ggplot.
+
+```{r}
+covid %>%
+  filter(state == "California") %>%
+  ggplot(mapping = aes(x=date, y=cases)) +
+  geom_area()
+```
+
+```{r}
+covid %>%
+  filter(state == "California") %>%
+  ggplot(mapping = aes(x=date, y=cases)) +
+  geom_point()
+```
+
+The following examples (slightly) modify the data / aesthetics to show off additional geometries that are commonly used:
+
+```{r}
+covid %>%
+  mutate(time = month(date, label = TRUE)) %>%
+  ggplot(mapping = aes(x=time, y=cases)) +
+  geom_boxplot() +
+  ggtitle("covid-19 cases in the USA over time")
+```
+
+```{r}
+covid %>%
+  mutate(time = month(date, label = TRUE)) %>%
+  ggplot(mapping = aes(x=time, y=cases)) +
+  geom_violin(scale = "width") +
+  ggtitle("covid-19 cases in the USA over time")
+```
+
+```{r}
+covid %>%
+  mutate(time = month(date, label = TRUE)) %>%
+  filter(time > "Jun") %>%
+  ggplot(mapping = aes(x=time, y=cases)) +
+  geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 5, binwidth = 1000) +
+  ggtitle("covid-19 cases in the USA over time")
+```
+
+```{r}
+covid %>%
+  mutate(time = month(date, label = TRUE)) %>%
+  ggplot(mapping = aes(x=time, y=cases)) +
+  geom_point() +
+  ggtitle("covid-19 cases in the USA over time")
+```
+
+So far, all of these examples have been examples of **two-variable** geometries (sometimes referred to in statistics as **bivariate data**), which is why we've needed to map data to both the x-axis and y-axis. But there are also many kinds of data that require **single-variable** or **univariate** geometries. Here's an example: on September 24, 2020, each state had some number of covid cases. Of the 50 states, Vermont had the lowest number of cases, and California had the most (for now, we'll ignore the fact that California obviously has a bigger population). We want to know, overall, whether the country look more like Vermont or California.
+
+We can address this question by plotting the univariate distribution. As with bivariate data, there are different kinds of geometries we could use to do this. Note that some of the geometries can be used with *both* univariate and bivariate data, like `geom_dotplot`!
+
+```{r}
+covid %>%
+  filter(date == as.Date("2020-09-24")) %>%
+  ggplot(mapping = aes(x=cases)) +
+  geom_histogram() +
+  ggtitle("Distribution of covid-19 cases in the USA on 09/24/2020")
+```
+
+```{r}
+covid %>%
+  filter(date == as.Date("2020-09-24")) %>%
+  ggplot(mapping = aes(x=cases)) +
+  geom_density() +
+  ggtitle("Distribution of covid-19 cases in the USA on 09/24/2020")
+```
+
+```{r}
+covid %>%
+  filter(date == as.Date("2020-09-24")) %>%
+  ggplot(mapping = aes(x=cases)) +
+  geom_area(stat = "bin") +
+  ggtitle("Distribution of covid-19 cases in the USA on 09/24/2020")
+```
+
+```{r}
+covid %>%
+  filter(date == as.Date("2020-09-24")) %>%
+  ggplot(mapping = aes(x=cases)) +
+  geom_freqpoly() +
+  ggtitle("Distribution of covid-19 cases in the USA on 09/24/2020")
+```
+
+```{r}
+covid %>%
+  filter(date == as.Date("2020-09-24")) %>%
+  ggplot(mapping = aes(x=cases)) +
+  geom_dotplot() +
+  ggtitle("Distribution of covid-19 cases in the USA on 09/24/2020")
+```
+
+# Layers
+
+Perhaps you're scrolling through these examples and thinking to yourself... well, big deal. You can make different kinds of plots. You can do that in any competently-designed software. Why did any of this have to be prefaced with this confusing "grammar of graphics" idea?
+
+To the skeptic, my response is this: What makes ggplot so powerful is that you can use a common grammar to **layer** different geometries on top of each other. Depending on how the data are mapped to the aesthetics, you can automatically get a consistent set of mappings across layers.
+
+Here's an example. As you can see below, barplots are nice for intuitively understanding the central tendencies of a distribution (such as the mean or median), but obscure important information about how data are distributed.
+
+```{r}
+covid %>%
+  mutate(time = month(date, label = TRUE)) %>%
+  ggplot(mapping = aes(x=time, y=cases)) +
+  geom_bar(stat = "summary", fun = "mean") +
+  ggtitle("covid-19 cases in the USA over time")
+```
+
+On the other hand, geometries like dotplots are nice for showing the shape of a distribution, but usually aren't very good at displaying central tendencies. What if we could have both by layering one on top of the other? As we can see below, the barplot was hiding the fact that there are a fair number of states with many, many, many more cases than the mean.
+
+```{r}
+covid %>%
+  mutate(time = month(date, label = TRUE)) %>%
+  ggplot(mapping = aes(x=time, y=cases)) +
+  geom_bar(stat = "summary", fun = "mean") +
+  geom_dotplot(binaxis = "y", stackdir = "center",
+               dotsize = 2, binwidth = 1000) +
+  ggtitle("covid-19 cases in the USA over time")
+```
+
+Finally, it's worth noting that changing the order of geometries in the code also changes the ordering of the layers. To illustrate:
+
+```{r}
+covid %>%
+  mutate(time = month(date, label = TRUE)) %>%
+  ggplot(mapping = aes(x=time, y=cases)) +
+  geom_dotplot(binaxis = "y", stackdir = "center",
+               dotsize = 2, binwidth = 1000) +
+  geom_bar(stat = "summary", fun = "mean") +
+  ggtitle("covid-19 cases in the USA over time")
+```
+
+# Aesthetics, revisited
+
+Before, I mentioned that there are lots of other aesthetics we could map data to. For example, I commonly use color, fill, alpha (transparency), size, linetype, and group.
+
+Here's an example. It's nice that we know the overall distribution of covid cases in the US over time, but it could be useful to break down that overall number into individual states/territories/protectorates. As a first pass, we could color-code each distinct entity. Note that we have a new aesthetic in the initial ggplot call. Note also that we don't have to explicitly tell `geom_area` that it needs to map the fill aesthetic to states. Instead, `geom_area` automatically **inherits** that aesthetic from the initial ggplot call.
+
+```{r fig.height=8}
+covid %>%
+  ggplot(mapping = aes(x=date, y=cases, fill=state)) +
+  geom_area() +
+  theme(legend.position = "bottom")
+```
+
+Obviously, the usefulness of this visualization is limited by the fact that it's basically impossible to distinguish between different colors. Try picking out the trajectory of (say) Kentucky vs Louisiana. The broader point, though, is that it's possible to create such a mapping.
+
+Let's try other kinds of aesthetic visualizations. To give us a little more data to work with, let's pull in the dataset about the 2016 presidential election.
+
+```{r message=FALSE}
+elections <- here("Data", "countypres_2000-2016.csv") %>%
+  read_csv() %>%
+  filter(year == 2016) %>%
+  filter(party %in% c("democrat", "republican")) %>%
+  group_by(state, candidate) %>%
+  summarise(candidatevotes = sum(candidatevotes, na.rm=T)) %>%
+  group_by(state) %>%
+  mutate(lean_democrat = candidatevotes / first(candidatevotes)) %>%
+  filter(candidate == "Hillary Clinton") %>%
+  ungroup() %>%
+  select(state, lean_democrat)
+```
+
+We might want to see whether covid case trajectories systematically differ, depending on how Democrat-friendly a given state is. Note that the color-coding now maps to a **continuous** variable (i.e., the variable `leans_democrat` can take on any numeric value $x \geq 0$), whereas the color-coding in the last example mapped to a **discrete** variable (i.e., the value $2.6$ means nothing in the context of state names). Note also that we map the variable `state` to the aesthetic `group`. Why do we specify that mapping? Try removing that aesthetic and see what happens.
+
+Washington DC is excluded from this visualization because voters preferred Clinton so overwhelmingly that it makes the rest of the plot unreadable.
+
+```{r, message=FALSE}
+covid %>%
+  inner_join(elections) %>%
+  filter(state != "District of Columbia") %>%
+  ggplot(mapping = aes(x=date, y=cases, color=lean_democrat, group=state)) +
+  geom_line()
+```
+
+You might have noticed something confusing in these two examples, which is that we color-coded the two graphs using two different aesthetics: **fill** and **color**. Confusingly, these are *not* interchangeable aesthetics. So how do you remember which is which? Think back to when you were a kid, and you drew pictures using crayons. You could use the green crayon to draw the outline of a cat, but then use the blue crayon to fill in the outline. That's exactly the same difference here. The color aesthetic is used for lines, outlines, and (most of the time) single dots in `geom_point`. The fill aesthetic is used for filling in outlines.
+
+Let's illustrate the difference using a barplot. First, we'll map `state` to `fill`.
+
+```{r, message=FALSE}
+covid %>%
+  filter(state %in% c("Tennessee", "California", "Rhode Island")) %>%
+  mutate(date = month(date, label = TRUE)) %>%
+  group_by(state, date) %>%
+  summarise(cases = sum(cases)) %>%
+  ungroup() %>%
+  ggplot(mapping = aes(x=date, y=cases, fill=state)) +
+  geom_bar(stat = "summary", fun = "mean") +
+  theme(legend.position = "bottom")
+```
+
+Now we'll take the same data and map it to `color`. Probably not what you typically want.
+
+```{r, message=FALSE}
+covid %>%
+  filter(state %in% c("Tennessee", "California", "Rhode Island")) %>%
+  mutate(date = month(date, label = TRUE)) %>%
+  group_by(state, date) %>%
+  summarise(cases = sum(cases)) %>%
+  ungroup() %>%
+  ggplot(mapping = aes(x=date, y=cases, color=state)) +
+  geom_bar(stat = "summary", fun = "mean") +
+  theme(legend.position = "bottom")
+```
+
+# Inheritance and overriding aesthetics
+
+At this point, we've now built some intuitions about how to map data to aesthetics, and how to layer geometries on top of each other. Now, let's combine these ideas and explore how aesthetic mappings can affect layers of geometries. So far, we've supplied aesthetic mappings in the initial ggplot call, i.e., `ggplot(mapping = aes(x, y, color...))`. When you do this, you're telling ggplot that every geometry should **inherit** the aesthetics from the initial call. Let's see how this works using an example.
+
+The US Census categorizes states as belonging to one of four "regions": the Northeast, Midwest, South, and West. We might be interested in seeing whether there are regional trends in covid cases over time. In other words, we'll want to visualize the **central tendency** of this data, by plotting the mean/average of the data.
+
+As usual, we've supplied the mapping between the data and the color aesthetic in the initial call. Since all subsequent geometries inherit the aesthetics specified in the initial call, this is how ggplot knows to color-code `geom_line` even though we haven't explicitly told it to.
+
+```{r message=FALSE}
+regions <- here("Data", "state_region_division.csv") %>%
+  read_csv()
+
+covid %>%
+  inner_join(regions) %>%
+  group_by(region, date) %>%
+  summarise(cases_mean = mean(cases, na.rm = TRUE),
+            cases_sd = sd(cases, na.rm = TRUE),
+            cases_n = n(),
+            cases_se = cases_sd / cases_n) %>%
+  ungroup() %>%
+  ggplot(mapping = aes(x=date, y=cases_mean, color=region)) +
+  geom_line()
+```
+
+You could achieve the same output by supplying the aesthetic mapping to `geom_line` directly, instead of letting it be inherited:
+
+```{r, message=FALSE}
+covid %>%
+  inner_join(regions) %>%
+  group_by(region, date) %>%
+  summarise(cases_mean = mean(cases, na.rm = TRUE),
+            cases_sd = sd(cases, na.rm = TRUE),
+            cases_n = n(),
+            cases_se = cases_sd / cases_n) %>%
+  ungroup() %>%
+  ggplot(mapping = aes(x=date, y=cases_mean)) +
+  geom_line(aes(color=region))
+```
+
+Now let's see how inheritance works when we have multiple geometries being layered on top of each other. We haven't yet introduced any statistical intuitions, but we can still appreciate the idea that we might be interested in visualizing both **central tendency** (the average number of cases in a region), and also the **variability** around that central tendency. Since we have daily count data, we can use `geom_ribbon` to draw continuous error bars.
+
+When we run this code, we can immediately see that there's a lot of variability in the Northeast, and relatively little in the Midwest. Intuitively, that suggests that states in the Midwest all have similar covid case counts, and that states in the Northeast have less similar case counts. This seems pretty reasonable, given that Vermont has consistently had some of the lowest counts in the whole country, and that New York (City) had some of the country's highest counts in the first wave.
+
+Before moving on, try to answer the following questions. First, why does `geom_ribbon` have an additional `aes` mapping? Second, why are the ribbons displayed such that they have color-coded outlines but grey interiors?
+
+```{r, message=FALSE}
+covid %>%
+  inner_join(regions) %>%
+  group_by(region, date) %>%
+  summarise(cases_mean = mean(cases, na.rm = TRUE),
+            cases_sd = sd(cases, na.rm = TRUE),
+            cases_n = n(),
+            cases_se = cases_sd / cases_n) %>%
+  ungroup() %>%
+  ggplot(mapping = aes(x=date, y=cases_mean, color=region)) +
+  geom_ribbon(aes(ymin=cases_mean-cases_se, ymax=cases_mean+cases_se)) +
+  geom_line()
+```
+
+The default mappings are okay, but they could definitely be improved.
+
+First, it's hard to tell which error bars belong to what region, so it'd be good to create a new mapping to the `fill` aesthetic. That can be done in the initial ggplot call, so that `geom_ribbon` inherits `fill`. This is exactly the same strategy we've taken in previous examples.
+
+Second, when geographical regions' standard errors overlap with each other, it'd be nice to be able to tell how much overlap there is. To do this, we can specify an aesthetic that is *not* mapped to the values in our data, but instead takes on a **constant** value. In the code below, we can see that we've specified an aesthetic `alpha` for `geom_ribbon`, which controls the transparency of that geometry. `alpha=1` would make the ribbons fully opaque, and `alpha=0` would make the ribbons fully transparent.
+
+Third, it's confusing to figure out which of the colored lines represents the mean, and which represent the range of ±1 standard error. We could help accentuate the central tendency by modifying its `size`. Look at the code below and see if you can identify what code accomplishes this. Once again, we see that `size` is not mapped to our data values, but instead takes on a constant value.
+
+```{r message=FALSE}
+covid %>%
+  inner_join(regions) %>%
+  group_by(region, date) %>%
+  summarise(cases_mean = mean(cases, na.rm = TRUE),
+            cases_sd = sd(cases, na.rm = TRUE),
+            cases_n = n(),
+            cases_se = cases_sd / cases_n) %>%
+  ungroup() %>%
+  ggplot(mapping = aes(x=date, y=cases_mean, color=region, fill=region)) +
+  geom_ribbon(aes(ymin=cases_mean-cases_se, ymax=cases_mean+cases_se),
+              alpha=0.25) +
+  geom_line(size=1)
+```
+
+Now, just to prove we can, let's try mapping the linetype aesthetic to our data.
+
+```{r message=FALSE}
+covid %>%
+  inner_join(regions) %>%
+  group_by(region, date) %>%
+  summarise(cases_mean = mean(cases, na.rm = TRUE),
+            cases_sd = sd(cases, na.rm = TRUE),
+            cases_n = n(),
+            cases_se = cases_sd / cases_n) %>%
+  ungroup() %>%
+  ggplot(mapping = aes(x=date, y=cases_mean, color=region, fill=region, linetype=region)) +
+  geom_ribbon(aes(ymin=cases_mean-cases_se, ymax=cases_mean+cases_se),
+              alpha=0.25) +
+  geom_line(size=1)
+```
+
+After looking at this plot, which is visually very "busy", we might decide that we don't want `linetype` to have an aesthetic mapping for the `geom_ribbon` layer. We could therefore **override** the aesthetic mapping. For the `geom_ribbon` layer only, we can specify a constant value for `linetype`, which tells ggplot that this geometry should *not* inherit the mapping.
+
+```{r message=FALSE}
+covid %>%
+  inner_join(regions) %>%
+  group_by(region, date) %>%
+  summarise(cases_mean = mean(cases, na.rm = TRUE),
+            cases_sd = sd(cases, na.rm = TRUE),
+            cases_n = n(),
+            cases_se = cases_sd / cases_n) %>%
+  ungroup() %>%
+  ggplot(mapping = aes(x=date, y=cases_mean, color=region, fill=region, linetype=region)) +
+  geom_ribbon(aes(ymin=cases_mean-cases_se, ymax=cases_mean+cases_se),
+              alpha=0.25, linetype="solid") +
+  geom_line(size=1)
+```
+
+Or, by overriding the `color` mapping, we could even remove it altogether:
+
+```{r message=FALSE}
+covid %>%
+  inner_join(regions) %>%
+  group_by(region, date) %>%
+  summarise(cases_mean = mean(cases, na.rm = TRUE),
+            cases_sd = sd(cases, na.rm = TRUE),
+            cases_n = n(),
+            cases_se = cases_sd / cases_n) %>%
+  ungroup() %>%
+  ggplot(mapping = aes(x=date, y=cases_mean, color=region, fill=region, linetype=region)) +
+  geom_ribbon(aes(ymin=cases_mean-cases_se, ymax=cases_mean+cases_se),
+              alpha=0.25, color=NA) +
+  geom_line(size=1)
+```
+
+# Next time...
+
+Whew, we've covered a lot of ground here. Originally, I'd planned to cover all of ggplot in this single tutorial, but I think it's important for you to get some practice with these fundamental concepts before we tackle the remaining features of ggplot. Next time, we'll cover the use of axis labels, facets, scales and legends, coordinates, and themes. These additional features can help you create polished plots that are publication-ready.
+
+# Exercises
+
+A general note: these are hard exercises, and you won't necessarily find the answers in this tutorial. Learning to Google (or, if you really care about privacy, [DuckDuckGo](https://duckduckgo.com/)) answers to your coding questions is itself an essential skill. So, be patient with yourself. Struggling through these exercises will help you understand this material at a deeper level.
+
+1. In this tutorial, we've plotted covid case counts from different states. One of the major issues with our approach is that we've plotted raw case counts. Let's imagine that Vermont and California have the same *percentage* of people who have contracted covid (this is not actually true, but just imagine that it is). Since California has a much larger population, our plot would show that California has many more cases than Vermont. But, depending on what message you're trying to communicate, that would be a misleading visualization. We would instead want to show case rates *per capita* (i.e., adjusted by state population). In the `Data` folder, use the file `nst-est2019-modified.csv` to pull in the U.S. Census' most recent population estimates for each state. Then create a new variable that indexes covid counts *per 1,000 people*. Find a compelling way to plot these data.
+
+2. Your friend has a hypothesis that covid counts tend to be especially high in states where there are many incarcerated people. Knowing that you're learning data science skills, your friend asks for your help in testing this hypothesis. We have previously used the `incarceration_trends.csv` dataset to examine incarceration trends, which you can now use to answer your friend's question. Since we haven't yet covered techniques for performing statistical analysis, find ways to plot the data in a way that *visually* tests your friend's hypothesis. Don't forget the lesson we've just learned about raw counts vs population-adjusted counts.
+
