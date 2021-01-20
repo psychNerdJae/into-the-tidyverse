@@ -1,5 +1,9 @@
 # Into the Tidyverse
 
+## Introduction and setup
+
+For details on how to install software and download the tutorials, visit: [https://psychnerdjae.github.io/into-the-tidyverse/](https://psychnerdjae.github.io/into-the-tidyverse/)
+
 
 ## File and folder structure
 
