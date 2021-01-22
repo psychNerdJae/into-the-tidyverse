@@ -1,0 +1,168 @@
+---
+title: "Session 5: Plotting data II"
+author: "Jae-Young Son"
+output:
+  html_document:
+    code_folding: show
+    toc: TRUE
+    toc_float: TRUE
+---
+
+This document was most recently knit on `r Sys.Date()`.
+
+# Introduction
+
+In the last tutorial, we covered many of the fundamental ideas underlying the **grammar of graphics**: 1) aesthetics and how to map your data to aesthetics, 2) geometries and how to layer them, and 3) how geometries inherit aesthetics from the initial ggplot call. When you develop a good grasp on these fundamental ideas, you have enough knowledge to figure out how to make nearly any visualization you want (especially now that you know what keywords to search for). In today's tutorial, we'll learn how to give your plots a little more polish. The goal is to make publication-ready plots, which (in theory) won't require further editing in external software like Illustrator or Inkscape.
+
+As you work through this tutorial's material, you may find yourself having to review those fundamental ideas from last time. That's normal, and perfectly fine. You shouldn't expect to become an expert after working through a single tutorial. I'll try to provide some hints and reminders in today's tutorial, which will hopefully let you review and scaffold from your existing knowledge.
+
+Let's go ahead and load some of the same data we were working with last time.
+
+```{r message=FALSE}
+library(tidyverse)
+library(lubridate)
+library(janitor)
+library(here)
+
+covid <- here("Data", "time_series_covid19_confirmed_US.csv") %>%
+  read_csv() %>%
+  clean_names() %>%
+  select(-c(uid:fips, country_region:combined_key)) %>%
+  rename(county = admin2, state = province_state) %>%
+  pivot_longer(cols = -c(county, state), names_to = "date", values_to = "cases") %>%
+  mutate(date = str_remove(date, "x"),
+         date = mdy(date)) %>%
+  group_by(state, date) %>%
+  summarise(cases = sum(cases)) %>%
+  ungroup()
+
+elections <- here("Data", "countypres_2000-2016.csv") %>%
+  read_csv() %>%
+  filter(year == 2016) %>%
+  filter(party %in% c("democrat", "republican")) %>%
+  group_by(state, candidate) %>%
+  summarise(candidatevotes = sum(candidatevotes, na.rm=T)) %>%
+  group_by(state) %>%
+  mutate(lean_democrat = candidatevotes / first(candidatevotes)) %>%
+  filter(candidate == "Hillary Clinton") %>%
+  ungroup() %>%
+  select(state, lean_democrat)
+
+regions <- here("Data", "state_region_division.csv") %>%
+  read_csv()
+```
+
+# Axis labels
+
+You may have noticed that when you don't supply ggplot with axis labels, it defaults to using your data's variable names:
+
+```{r}
+covid %>%
+  ggplot(mapping = aes(x=date, y=cases))
+```
+
+In this case, it doesn't look terrible, though we probably would prefer the axis labels to be capitalized. However, we'll often be working with variable names that look like `count_normalized_by_pop`. That's considerably less pretty, and I doubt you'd want to publish a figure with that exact axis label. Here's the simplest way to change the axis labels. As a bonus, I've also shown how to add a title and subtitle to your plot.
+
+```{r}
+covid %>%
+  ggplot(mapping = aes(x=date, y=cases)) +
+  xlab("Time") +
+  ylab("Raw case numbers") +
+  ggtitle(label = "covid-19 cases over time",
+          subtitle = "(not normalized by state population)")
+```
+
+# Facets
+
+Last time, we explored how to color-code our plots by **mapping** our data to the **aesthetics** `color` and `fill`. That worked okay when we were only comparing a few states to each other, but it was near-impossible to tell colors apart when we were plotting all 50 states (plus DC, territories, and protectorates). This is an example of **overplotting**, i.e. packing so much information into a single plot that it becomes hard to read. Which defeats the whole purpose of graphing out data! To illustrate, let's create a visualization that is clearly overplotted. Try picking out Tennessee from Texas...
+
+```{r fig.height=8}
+covid %>%
+  ggplot(mapping = aes(x=date, y=cases, color=state)) +
+  geom_line() +
+  theme(legend.position = "bottom")
+```
+
+Since states are discrete categories, it could potentially be useful to separate each state's data out into its own panel. That can be accomplished using a **facet**. In this example, we'll use the function `facet_wrap`. You can see that we specify one argument, `~state`.
+
+The squiggly symbol `~` is called a **tilde**, and can be found (on a US English keyboard at least) above the tab key and to the left of the number 1. When we start learning about statistics, we'll see the tilde very frequently. For example, we might be interested in using a penguin's flipper length to predict its body mass. We would write that **formula** as `body_mass ~ flipper_length`. Colloquially, we might say that we're interested in predicting the penguin's body mass ***by*** its flipper length. The same interpretation holds for our use of `facet_wrap`: we are faceting the data ***by*** state.
+
+```{r fig.height=8}
+covid %>%
+  ggplot(mapping = aes(x=date, y=cases)) +
+  geom_line() +
+  facet_wrap(~state) +
+  theme(legend.position = "bottom")
+```
+
+By looking at the documentation (`?facet_wrap`), you could see how to specify the exact number of columns/rows ggplot generates before it *wraps* the facets (hence the name of the function).
+
+What if we have *two* discrete variables we want to facet by? For example, we could be interested in examining covid counts ***by*** geographical region and political ideology (for illustration, we'll convert the continuous variable `lean_democrat` into a discrete variable). Well, we can take that verbal statement and translate it into a formula, and ggplot will happily accept it.
+
+As you're typing out this code, make sure you can answer the following questions: 1) Why have we added the `group` aesthetic in the initial ggplot call, and what happens if we take it out? 2) Recall that the variable `lean_democrat` is a ratio. Why have we defined the new variable `ideology` in this way? 3) In the previous plot, we faceted by state. So why haven't we specified the formula to be `~state + ideology` in this plot? 4) In our call to `facet_wrap`, why have we specified `ncol = 2`? Why not a different number? 5) What would happen if we made the formula `~ideology + region` instead, and might this change motivate us to specify a different `ncol`?
+
+```{r message=FALSE}
+covid %>%
+  inner_join(elections) %>%
+  mutate(ideology = if_else(
+    lean_democrat > 1,
+    "Democrat-leaning",
+    "Republican-leaning")) %>%
+  inner_join(regions) %>%
+  ggplot(mapping = aes(x=date, y=cases, group=state)) +
+  geom_line() +
+  facet_wrap(~region + ideology, ncol = 2)
+```
+
+It would be totally fair if you looked at this plot and declared it ugly. When you ask `facet_wrap` to give you multiple facets, it stacks the labels on top of each other. This takes up a lot of space, and doesn't necessarily give you the prettiest output. As an alternative, you could use `facet_grid`:
+
+```{r message=FALSE}
+covid %>%
+  inner_join(elections) %>%
+  mutate(ideology = if_else(
+    lean_democrat > 1,
+    "Democrat-leaning",
+    "Republican-leaning")) %>%
+  inner_join(regions) %>%
+  ggplot(mapping = aes(x=date, y=cases, group=state)) +
+  geom_line() +
+  facet_grid(rows = vars(region), cols = vars(ideology))
+```
+
+In other people's older code, you might see the syntax `row_variable ~ column_variable` instead. This style is being phased out for three reasons. First, it was hard for people to remember whether **LHS** (left-hand side) corresponded to rows or columns. Second, if you were plotting only a single facet, your code would look like chickenscratch: `. ~ column_variable`. Third, when we were supplying a formula to `facet_wrap`, we understood that `~state` implicitly meant `covid counts ~ state` (or in plain English, covid counts ***by*** state). So in the past, `facet_grid` forced us to specify something that looked like a formula, but was totally inconsistent with our understanding of how formulas work.
+
+```{r message=FALSE}
+covid %>%
+  inner_join(elections) %>%
+  mutate(ideology = if_else(
+    lean_democrat > 1,
+    "Democrat-leaning",
+    "Republican-leaning")) %>%
+  inner_join(regions) %>%
+  ggplot(mapping = aes(x=date, y=cases, group=state)) +
+  geom_line() +
+  facet_grid(region ~ ideology)
+```
+
+# Scales and legends
+
+We haven't really emphasized this point so far, but every aesthetic has a **scale** associated with it.
+
+```{r message=FALSE}
+covid %>%
+  inner_join(elections) %>%
+  mutate(ideology = if_else(
+    lean_democrat > 1,
+    "Democrat-leaning",
+    "Republican-leaning")) %>%
+  inner_join(regions) %>%
+  ggplot(mapping = aes(x=date, y=cases, group=state)) +
+  geom_line() +
+  facet_wrap(~region + ideology, ncol = 2)
+```
+
+# Coordinates
+
+# Themes
+
+# Exercises
