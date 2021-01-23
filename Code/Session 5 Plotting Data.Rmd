@@ -146,20 +146,120 @@ covid %>%
 
 # Scales and legends
 
-We haven't really emphasized this point so far, but every aesthetic has a **scale** associated with it.
+We haven't really emphasized this point so far, but every aesthetic has a **scale** associated with it. Let's consider the simplest case of the x and y-axis aesthetics. We're working with a continuous x-axis (time) and a continuous y-axis (case counts). There are two key assumptions we've made when plotting these: 1) that we *do* actually want those scales to be continuous, and 2) that we want the axes to be plotted on a *linear* scale. In the code below, we make this unstated assumption explicit by asking ggplot to use a continuous y-axis scale. While we're at it, we'll also modify the axis title. Recall that we could also do this using `ylab`.
+
+```{r}
+covid %>%
+  ggplot(aes(x=date, y=cases, group=state)) +
+  geom_line() +
+  scale_y_continuous(name = "Raw covid-19 case counts")
+```
+
+But if we wanted to, we could specify that an aesthetic be represented by a completely different kind of scale. For example, when working with continuous data that has a very large range, it can make sense to plot a **logarithmic** scale instead of a **linear** one.
+
+```{r}
+covid %>%
+  ggplot(aes(x=date, y=cases, group=state)) +
+  geom_line() +
+  scale_y_log10(name = "log-transformed covid-19 case counts")
+```
+
+Depending on our visualization needs, we could use a variety of scales. Another common scale transformation is to a square-root scale. If (for some reason) we wanted to sort continuous values into bins, we could do that too. Though there's virtually no reason why we would want to visualize these particular data in this way, we could even flip the y-axis scale so that the data are plotted upside down.
+
+```{r}
+
+covid %>%
+  ggplot(aes(x=date, y=cases, group=state)) +
+  geom_line() +
+  scale_y_sqrt(name = "Square-root-transformed covid-19 case counts")
+
+covid %>%
+  ggplot(aes(x=date, y=cases, group=state)) +
+  geom_line() +
+  scale_y_binned(name = "Binned covid-19 case counts")
+
+covid %>%
+  ggplot(aes(x=date, y=cases, group=state)) +
+  geom_line() +
+  scale_y_reverse(name = "Inexplicably-plotted covid-19 case counts")
+```
+
+## Discrete color scales
+
+This basic logic extends very naturally to other aesthetics. For example, let's examine color-coding. We could color-code the lines according to geographic region. By default, ggplot knows that region is a **discrete** (i.e., categorical) variable, so it uses a discrete color scale. We can make this assumption explicit by writing the following. Note again that we can change the name of the legend from the variable name `region` by specifying a name of our choosing.
+
+```{r message=FALSE}
+covid %>%
+  inner_join(regions) %>%
+  ggplot(mapping = aes(x=date, y=cases, color=region, group=state)) +
+  geom_line() +
+  scale_color_discrete(name = "Census-designated region:")
+```
+
+If you look at this plot and find it ugly, you are in good company. I've convinced that ggplot's default color palette is deliberately designed to revolt people into specifying their own (better) color scales. More importantly, we should also note that the default palette is not a color palette that is accessible to people with certain forms of color-blindness. Less importantly, if we printed off the plot on a black-and-white printer, we wouldn't be able to tell the colors apart anymore.
+
+So perhaps we'd like to use an alternative color scale that's prettier and more accessible. One built-in option is `viridis`, which is engineered to be perceptually uniform, accessible to viewers with the most common form of color blindness, and convertible to black-and-white. The `d` at the end of `scale_color_viridis_d` refers to the fact that our color aesthetic is being mapped to **discrete** data. There are a couple of viridis palettes: viridis, magma, inferno, plasma, and cividis. You can see that I prefer plasma, and that I even specify a custom subset of the full scale to use (to see why, try removing those arguments). You will develop your own preferences with experience.
+
+```{r message=FALSE}
+covid %>%
+  inner_join(regions) %>%
+  ggplot(mapping = aes(x=date, y=cases, color=region, group=state)) +
+  geom_line() +
+  scale_color_viridis_d(name = "Census-designated region:",
+                        begin = 0.1, end = 0.8, option = "plasma")
+```
+
+Another built-in option is `color_brewer`. The best way to understand the brewer is to [play with it online](https://colorbrewer2.org/). Once you've played around with it, the arguments are pretty straightforward to understand:
+
+```{r message=FALSE}
+covid %>%
+  inner_join(regions) %>%
+  ggplot(mapping = aes(x=date, y=cases, color=region, group=state)) +
+  geom_line() +
+  scale_color_brewer(name = "Census-designated region:",
+                     palette = "GnBu")
+```
+
+Even though the Brewer is convenient, I don't find myself using it very much. In the plot above, you can hardly see the lines for the Midwest. In practice, I go to the Color Brewer website, pick out colors that I actually like, then feed those **values** to `scale_color_manual`. You might say that the end result below looks bad. Sure, I'm actually not the biggest fan of my own work below. But at the least, I know it's bad because I have poor artistic taste, not because the function automatically picked out "bad" colors.
+
+```{r message=FALSE}
+covid %>%
+  inner_join(regions) %>%
+  ggplot(mapping = aes(x=date, y=cases, color=region, group=state)) +
+  geom_line() +
+  scale_color_manual(name = "Census-designated region:",
+                     values = c("#a8ddb5", "#4eb3d3", "#0868ac", "#084081"))
+```
+
+## Continuous color scales
+
+So far, we've only worked with discrete color scales. But, the exact same kind of logic works with continuous color scales. For example, let's color-code the lines according to how strongly a state leaned Democrat in the 2016 Presidential election (DC is removed because it overwhelmingly preferred Clinton; including it makes the rest of the plot unreadable):
 
 ```{r message=FALSE}
 covid %>%
   inner_join(elections) %>%
-  mutate(ideology = if_else(
-    lean_democrat > 1,
-    "Democrat-leaning",
-    "Republican-leaning")) %>%
-  inner_join(regions) %>%
-  ggplot(mapping = aes(x=date, y=cases, group=state)) +
+  filter(state != "District of Columbia") %>%
+  ggplot(mapping = aes(x=date, y=cases, color=lean_democrat, group=state)) +
   geom_line() +
-  facet_wrap(~region + ideology, ncol = 2)
+  scale_color_continuous(name = "Democrat-voting ratio:")
 ```
+
+It's often very hard to read continuous color scales. Remember how we'd previously used a y-axis that used a binned scale? That might not be very useful for case counts, but it could potentially be useful for making our color scale more readable.
+
+```{r message=FALSE}
+covid %>%
+  inner_join(elections) %>%
+  filter(state != "District of Columbia") %>%
+  ggplot(mapping = aes(x=date, y=cases, color=lean_democrat, group=state)) +
+  geom_line() +
+  scale_color_binned(name = "Democrat-voting ratio:")
+```
+
+You can modify the palette of continuous color scales in (more-or-less) exactly the same way we modified discrete color scales. On your own, try using viridis, brewer, and manual color scales.
+
+## Other aesthetics
+
+I won't spend much time on this section. I only want to note that there are similar scales for other aesthetics, and reiterate that every aesthetic must be represented by some scale. ggplot is usually pretty good about picking defaults that fit our usual assumptions, but just remember that you can take complete control at any time, for any aesthetic.
 
 # Coordinates
 
