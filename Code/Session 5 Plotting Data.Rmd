@@ -220,7 +220,7 @@ covid %>%
                      palette = "GnBu")
 ```
 
-Even though the Brewer is convenient, I don't find myself using it very much. In the plot above, you can hardly see the lines for the Midwest. In practice, I go to the Color Brewer website, pick out colors that I actually like, then feed those **values** to `scale_color_manual`. You might say that the end result below looks bad. Sure, I'm actually not the biggest fan of my own work below. But at the least, I know it's bad because I have poor artistic taste, not because the function automatically picked out "bad" colors.
+Even though the Brewer is convenient, I don't find myself using it very much. In the plot above, you can hardly see the lines for the Midwest. In practice, I go to the Color Brewer website, pick out colors that I actually like, then feed those **values** to `scale_color_manual`. You might say that the end result below looks bad. Truth be told, I'm actually not the biggest fan of the colors I picked out below. But at the least, I know it's bad because I have poor artistic taste, not because the function automatically picked out "bad" colors on my behalf.
 
 ```{r message=FALSE}
 covid %>%
@@ -244,7 +244,7 @@ covid %>%
   scale_color_continuous(name = "Democrat-voting ratio:")
 ```
 
-It's often very hard to read continuous color scales. Remember how we'd previously used a y-axis that used a binned scale? That might not be very useful for case counts, but it could potentially be useful for making our color scale more readable.
+It's often very hard to read continuous color scales. Remember how we'd previously used a y-axis that used a binned scale? That might not be very useful for case counts, but it is often useful for making our color scale more readable.
 
 ```{r message=FALSE}
 covid %>%
@@ -259,9 +259,17 @@ You can modify the palette of continuous color scales in (more-or-less) exactly 
 
 ## Other aesthetics
 
-I won't spend much time on this section. I only want to note that there are similar scales for other aesthetics, and reiterate that every aesthetic must be represented by some scale. ggplot is usually pretty good about picking defaults that fit our usual assumptions, but just remember that you can take complete control at any time, for any aesthetic.
+I won't spend much time on this section. I only want to note that there are similar scales for other aesthetics, and reiterate that every aesthetic is represented by a scale even when it's not explicitly specified. ggplot is usually pretty good about picking default scales, but just remember that you can take complete control at any time, for any aesthetic.
 
 # Coordinates
+
+In your history or math classes, you might remember having learned about the ancient Greek mathematician Euclid. His major accomplishment was deriving a system for describing geometric objects in terms of a small number of fundamental assumptions (known as axioms), which could be logically combined into theorems (statements that are true, as long as the axioms are true and have been combined without error). You may have heard the term "Euclidean geometry" used to describe this system of thinking.
+
+When we plot data, we are interested in mapping those data to geometries, and we have already spent considerable time considering this idea. But so far, we've somewhat taken for granted that these geometries also exist within a **coordinate system**. Let's imagine that we draw a square on a balloon that hasn't been inflated yet. We can describe the properties of that square quite well using Euclidean geometry. Then, we blow air into the balloon until it's fully inflated. When we look at the drawing we've made, will it still look like a square? Not really, because we've warped the underlying space. And if we tried to use Euclidean geometry to analyze that drawing, we wouldn't get very far.
+
+For a moment, let's return to the x/y-axis scales. These are special because they modify the **coordinate system** of the entire plot. For example, if we use `scale_y_sqrt` to plot the data on a square-root-transformed y-axis, we're no longer operating in a linear coordinate space.
+
+Most of the time, when we need to modify the x/y-axis scales, it's easiest to do it through `scale_x_whatever` or `scale_y_whatever`. However, there are going to be a few times when you'll want to modify the coordinate system
 
 # Themes
 
