@@ -26,3 +26,6 @@ https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.h
 
 State classifications into regions and divisions from the US Census
 Adapted from: https://www2.census.gov/geo/pdfs/maps-data/maps/reference/us_regdiv.pdf
+
+Popular baby names in the City of New York, from 2011 to 2017
+https://data.cityofnewyork.us/Health/Popular-Baby-Names/25th-nujf
