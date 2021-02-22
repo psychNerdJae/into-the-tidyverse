@@ -99,3 +99,7 @@ For details on how to install software and download the tutorials, visit: [https
 4. [Advanced R](https://adv-r.hadley.nz/)
 	- For people who are specifically interested in doing a deep-dive into R *as a programming language*
 	- Not really necessary for the average user, but may be a good resource if you're getting a weird error message and want to figure out exactly what it means
+5. [An introduction to data analysis](https://michael-franke.github.io/intro-data-analysis/index.html)
+	- A really detailed introduction to Bayesian and frequentist data analysis, with a nice introductory section on data wrangling and visualization (in case my materials just don't work for you!)
+6. [Doing Bayesian data analysis (in brms and the tidyverse)](https://bookdown.org/content/3686/)
+	- A herculean effort by Solomon Kurz to translate John Kruschke's excellent Bayesian data analysis book into use with the `brms` library as well as the tidyverse.
