@@ -1,0 +1,61 @@
+---
+title: "Session 9: An introduction to statistical modeling"
+author: "Jae-Young Son"
+output:
+  html_document:
+    code_folding: show
+    toc: TRUE
+    toc_float: TRUE
+---
+
+This document was most recently knit on `r Sys.Date()`.
+
+# The paradox of learning from first principles
+
+In my first grad-level statistics class, we covered the whole gamut of univariate ANOVA (ANalysis Of VAriance). The professor believed very strongly that we should be able to reason through complex statistical problems using a "first-principles" approach. That is, by knowing a small number of fundamental principles about how ANOVAs work, he expected that we should be able to apply our knowledge to novel statistical problems that we didn't ever cover in lecture.
+
+To a very strong degree, the homeworks and exams reflected this. We couldn't simply memorize a bunch of formulas and apply them to problems that differed superficially from the problems we worked through together in lecture. In structuring the class this way, our professor believed that we'd gain a deep understanding how all of the first principles informed each other, and appreciate how more complex analyses (e.g., two-way between-subjects or one-way within-subjects designs) conceptually built off of simpler analyses (e.g., one-way between-subjects designs).
+
+From the way I've described the class, you can probably infer that I approve of the professor's basic reasoning, and that I appreciated having to struggle through the hard task of solving concrete problems by translating abstract knowledge. So, in summary, I think first principles are great! ...as long as you can learn from them. And I think that's the biggest problem, is that it's really hard to learn from first principles.
+
+I should say, many people thrive when they're required to learn from first principles. From what I understand of engineering, for example, the entire curriculum is essentially structured around learning, applying, and combining first principles. Many statisticians also seem to like this approach, or at least the ones that I've been a student of.
+
+But I have to tell you, I am not such a person. I fail miserably as a student when I'm taught from first principles. I struggled to understand what was going on in my class on ANOVAs, and it's only in retrospect (having taken classes in *applied* regression) that I can appreciate some of the insights I was supposed to have learned the first time around. This doesn't seem to be an isolated case for me. I had to take what was essentially the same introductory stats class *three times* before I understood any of it. Once in my junior year of high school, once in my freshman year of college, and again in my junior year of college. Tellingly, I didn't understand the material when I took the two classes in the maths and stats departments; it only clicked when I took the *applied* stats in the biostatistics department. This is very clearly a pattern.
+
+This surprises people who know me well, because I love applying first-principles reasoning in my day-to-day. And if you've been following along so far, you know that I've been incorporating a lot of "fundamental" knowledge into my tutorials, above-and-beyond what's strictly required to work with data. So what gives?
+
+For people like me, I think there's a paradox of learning from first principles. On paper, it seems obvious that we should learn some of the fundamental concepts and ideas, and to be able to build from those fundamentals when solving more complex problems. And I think in the grand scheme of lifelong learning, this is exactly what we should be aiming for. But when I'm actually called upon to learn from first principles as a student, I find myself unable to do it.
+
+As a psychologist, I wanted to understand why there was this weird discrepancy. The answer came to me when I was people-watching at the mall food court (this was in the before-times, when the worst disease I could contract from a crowd was a bad cold). There was a little kid who had recently learned to walk, and this kid was *absolutely booking it*. It looked like he was at the age where he could run in a stable way, but he hadn't quite figured out how to walk slowly. Every time he tried, he began to wobble and fall. So, instead, he ran. I began to think about traditional East Asian breathing and walking exercises, where adults deconstruct behaviors that are normally very automatic, as to correct bad habits. I thought about the struggle I had when learning to sing choir music, because it required me to re-examine the bad breathing and vocalizing habits I'd learned over a lifetime. And I thought about the old folk adage, "Sometimes, you have to learn how to run before you can learn how to walk."
+
+This got me thinking about the nature of learning itself. In college, I sometimes snuck into grad-level psych seminars (and made so much of a nuisance of myself that the department began a policy of disallowing undergrads from following in my footsteps). By and large, the focus of those classes was to critically re-examine the primary evidence for claims that were taught as fact in introductory classes. For example, in many of my intro-level classes, I was taught that the fusiform face area (FFA) is a brain region that's specialized for human face processing. There would always be an allusion to the fact that there was some theoretical disagreement about this (e.g., the FFA also seemed to be "activated" when viewing objects of one's particular expertise, like birds for birdwatchers), but mostly it was taught as a matter of fact.
+
+But there are deeper disagreements in this literature, which are rarely covered in undergraduate-level courses. For example, the face-selective and expertise hypotheses both rest on the same assumptions, namely that the brain is very modular, and that modules can (sometimes) be cleanly mapped to psychological functions. Those assumptions aren't without controversy. We could instead examine how visual information from our eyes is processed in different parts of our brain, and appreciate that in the brain's retinotopic map, the FFA processes a lot of the visual information we get from "foveating" (i.e., focusing in the center of our vision), instead of visual information we get from our periphery. When you're an expert in looking at things, you spend a lot of time foveating on them. So maybe, there aren't modules in the brain after all. Maybe there are actually low-level computations that happen to map onto psychological functions because of the brain's architecture. (Before I get in trouble with real experts, I should disclaim that I'm not a vision scientist! So I have no clue if this is a good description of the debate. The last time I learned about any of this was in 2012, and I'm not entirely convinced that I got the debate right back then either.)
+
+But I'd argue that the point of an undergrad intro class is not to teach the cutting-edge science, explain all of the available details, or even walk through the logic of all of the important and fundamental debates. For someone who's never thought about vision science or neuroscience before, we have to (in the poet Emily Dickinson's words) "tell all the truth, but tell it slant." That is, we have to give people some sort of big conceptual framework so that when they learn a new detail, they can file it away inside of a mental structure that lets them make sense of many details as a holistic collection. If you're feeling generous, it's storytelling, and if you're not, it's lying.
+
+That's okay by me. I think a lot of good pedagogy is lying by ommission, and I think a lot of good research is unteachable to the uninitiated.
+
+Sometimes, you have to run before you can walk. Sometimes, you have to build big knowledge structures before you can (later) critically deconstruct them.
+
+For me, the problem of learning from first principles is that I don't know how to fit them into a bigger-picture view of the world. I'm not good at building knowledge structures from the ground up. Instead, I have to first build the knowledge structure, then figure out where the first principles fit inside of it. I've come to believe that a good approach for people like me is to learn statistics backwards.
+
+An aside: I highly recommend reading ["Statistical Rethinking" by Richard McElreath](https://xcelab.net/rm/statistical-rethinking/). His approach is Bayesian (we're going to stick with frequentist statistics, which are more commonly taught and used in applied research), but the clarity of his thinking transcends any particular kind of statistical framework. [The first chapter of his book is available for free](https://xcelab.net/rmpubs/sr2/statisticalrethinking2_chapters1and2.pdf), and I'm going to urge you to stop now and read that first chapter before returning to the next section.
+
+
+# Learning statistics backwards
+
+If a real statistician is reading this, they might be wincing right around now. But I can only say what my experience has been, and what's worked for me.
+
+I learned how to implement and interpret multilevel logistic regression models before I even understood the fundamental assumptions of the t-test. I was fiddling with random effects structures before I even knew what a "degree of freedom" was.
+
+If these words already mean anything to you, maybe you've joined the staticians in wincing, and maybe I've convinced you to stop listening to anything else I have to say. Fair enough! I learned everything backwards, and I did all of the complex tests the "wrong way" before I went back to revisit the basics.
+
+But when I started with the more complex techniques and worked my way backwards, I felt like I could really appreciate the importance and relevance of the simpler techniques. "Oh! So that's why we need to multilevel modeling in the first place, because there are different sources of variability that would otherwise get jumbled together if you just did a t-test. Ah-ha! This is why we need to include certain kinds of variables in the random effects structure, because otherwise the degrees of freedom get overinflated in the fixed effects."
+
+So in writing these statistics tutorials, **my goal is not to teach you how to be a proficient (or even competent) modeler**. After finishing these tutorials, **you should go take a formal class in statistics taught by a real statistician**, where you learn statistics from first principles.
+
+No, instead, **my goal is to provide you with a knowledge structure**. I want you to have a big-picture view of how statistical tests fit together, so that when you go back and re-learn stats "the right way," you can understand where the first principles fit within your knowledge structure... and subsequently update some of the misunderstandings you'd originally built into your knowledge structure.
+
+Here, we're going to perform complex statistical tests that address the complex questions you're interested in answering, drawing upon complex data. We're going to learn how to interpret those tests as if you've performed them correctly without violating key assumptions (and I should warn you now, we're going to violate lots of assumptions). We're going to use the framework of regression, which is often considered "too advanced" for beginners (I didn't formally learn regression until grad school), because it will help you place various statistical tests into a single unified framework, a single coherent knowledge structure. And whenever I can, I'll let you know when I'm lying by ommission, so that you can go investigate further once you have a knowledge structure in place.
+
