@@ -2,7 +2,7 @@
 
 ## Introduction and setup
 
-For details on how to install software and download the tutorials, visit: [https://psychnerdjae.github.io/into-the-tidyverse/](https://psychnerdjae.github.io/into-the-tidyverse/)
+For details on how to install software and download the tutorials, [click here](https://jaeyoungson.com/tutorials.html).
 
 
 ## File and folder structure
@@ -56,29 +56,6 @@ For details on how to install software and download the tutorials, visit: [https
 8. The integrated tidyverse and beyond.
 	- What does it mean for a non-`tidyverse` library to be tidy-friendly?
 	- What are some challenges in using libraries that are *not* tidy-friendly?
-9. An introduction to statistical modeling.
-	- The paradox of learning from first principles.
-	- My approach: learning statistics backwards.
-10. Simple regression.
-	- Testing mean differences using the t-test.
-	- Testing association strengths using correlations.
-	- Surprise! These techniques are all secretly simple regression.
-11. Multiple regression I.
-	- The problem of shared variance.
-	- Semi-partial estimates.
-	- Interpreting model estimates.
-12. Multiple regression II.
-	- Why categorical variables make analysis more complicated.
-	- Contrasts.
-13. Multiple regression III.
-	- Interactions.
-14. Generalized linear models.
-	- Distributional assumptions.
-	- Logistic and Poisson regression.
-15. Multilevel modeling.
-	- The problem of repeated measures.
-	- The logic of mixed-effects regression.
-	- Introduction to `lme4`.
 
 
 ## Useful resources
@@ -87,19 +64,6 @@ For details on how to install software and download the tutorials, visit: [https
 	- Extremely accessible to people who know nothing about programming
 	- Makes extensive use of the tidyverse, which is a collection of R packages that streamlines the process of cleaning/analyzing data
 	- Written by one of the lead programmers of many tidyverse packages
-2. [Learning Statistics with R](https://learningstatisticswithr.com/)
-	- Oriented around statistics
-	- Extremely accessible to people who know very little about statistics or programming
-	- Teaches statistics from first principles, and focuses on conceptual underpinnings
-	- Written by a psychologist whose speciality is in computational modeling
-3. [Deep dive into statistics using R](http://users.stat.umn.edu/~helwig/teaching.html)
-	- A wealth of resources for people who want more statistical grounding and translations of mathematical formalisms into R code
-	- Covers everything from simple linear regression to multivariate/nonparametric statistics
-	- Great resource for brushing up on advanced statistical concepts
-4. [Advanced R](https://adv-r.hadley.nz/)
+2. [Advanced R](https://adv-r.hadley.nz/)
 	- For people who are specifically interested in doing a deep-dive into R *as a programming language*
 	- Not really necessary for the average user, but may be a good resource if you're getting a weird error message and want to figure out exactly what it means
-5. [An introduction to data analysis](https://michael-franke.github.io/intro-data-analysis/index.html)
-	- A really detailed introduction to Bayesian and frequentist data analysis, with a nice introductory section on data wrangling and visualization (in case my materials just don't work for you!)
-6. [Doing Bayesian data analysis (in brms and the tidyverse)](https://bookdown.org/content/3686/)
-	- A herculean effort by Solomon Kurz to translate John Kruschke's excellent Bayesian data analysis book into use with the `brms` library as well as the tidyverse.

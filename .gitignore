@@ -1,3 +1,6 @@
+# Specific directories/files
+Scratch/*
+
 # macOS Files
 .DS_Store
 ~$*.docx
@@ -38,7 +41,3 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
-
-# Specific directories/files
-Videos/*
-Scratch/*
