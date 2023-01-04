@@ -1,0 +1,1051 @@
+---
+title: "Into the tidyverse, Session 8"
+subtitle: "Wrangling data"
+author: "Jae-Young Son"
+date: "2020-12-01"
+theme:
+  light: flatly
+  dark: darkly
+format:
+  html:
+    toc: true
+    toc-location: left
+    code-fold: show
+    code-line-numbers: true
+    embed-resources: true
+---
+
+# Introduction
+
+Let's load in our usual libraries...
+
+```{r load-libraries}
+#| message: false
+
+library(tidyverse)
+library(janitor)
+library(here)
+```
+
+This tutorial is going to be a bit hard, so you might need to work through it in sections!
+
+The last time we thought about datatypes, it was in our very first tutorial. We learned that functions like `readr::read_csv` are more explicit about datatypes than their "base-R" equivalents like `utils::read.csv`. In that tutorial, we also briefly alluded to the fact that R is (by default) a **weakly-typed** language, and that the tidyverse provides a (relatively) **strongly-typed** alternative to many base-R functions.
+
+Below, we'll reproduce the example introduced in the first tutorial:
+
+```{r verify-weak-typing}
+# Here's the year 2020, saved as a string
+this_year <- "2020"
+
+# We're making sure that the variable is a string, not a number
+is.character(this_year)
+is.numeric(this_year)
+
+# Now we test whether this string is equal to the number 2,020
+this_year == 2020
+```
+
+This simple example illustrates how weakly-typed languages have the potential to create headaches through implicit conversion. Part of the appeal of the `tidyverse` is that its functions are designed to stop implicit conversion from happening. This can be annoying if you feel that strong typing is pedantic, but it usually ends up saving you a lot of time and grief in the long run.
+
+Now that we've grown more comfortable with basic data wrangling operations, it's time to deepen our understanding of datatypes.
+
+# Type-checking
+
+Type errors occur most frequently when you're performing mutating operations. To illustrate, let's open up a dataset classifying U.S. states into regions, and save that data to a variable called `regions`. This is the `state_region_division.csv` file from the `data` folder.
+
+```{r load-regions}
+#| class.source = "fold-hide"
+
+regions <- here("data", "state_region_division.csv") %>%
+  read_csv()
+```
+
+There's often some contention about what states count as being part of the "Midwest", so let's just pretend like we want to weigh in on the controversy. We decide that all states classified as "East North Central" are part of the "true" Midwest, whereas states from "West North Central" are just "Nowhere" states. We'll use `dplyr::if_else` to set the record straight.
+
+```{r if-else-1}
+regions %>%
+  filter(region == "Midwest") %>%
+  mutate(
+    region = if_else(division == "West North Central", "Nowhere", division)
+  ) %>%
+  knitr::kable()
+```
+
+A work colleague comes over and comments that it might be a little aggressive to label these states as "Nowhere". Perhaps, instead, we can just label them using the gentler `NA`? So let's go ahead and try to do this.
+
+```{r if-else-2}
+#| error: true
+
+regions %>%
+  filter(region == "Midwest") %>%
+  mutate(
+    region = if_else(division == "West North Central", NA, division)
+  )
+```
+
+To our surprise, this results in an error. What happened? Strictly speaking, `NA` is encoded as a **logical** datatype in R. Since we're working with `tidyverse` functions, we can't mix-and-match logical datatypes (`NA`) with character datatypes (`regions$region`). Instead, we have to use datatype-specific variants of `NA` to make this work.
+
+```{r if-else-3}
+regions %>%
+  filter(region == "Midwest") %>%
+  mutate(
+    region = if_else(division == "West North Central", NA_character_, division)
+  ) %>%
+  knitr::kable()
+```
+
+Note that there are `NA_x` variants for character, integer, real, and complex (i.e., non-real imaginary numbers) datatypes.
+
+If you find this confusing, maybe these examples (which will throw similar errors!) will help.
+
+```{r if-else-4}
+#| error: true
+
+regions %>%
+  filter(region == "Midwest") %>%
+  mutate(
+    region = if_else(division == "West North Central", TRUE, division)
+  )
+
+regions %>%
+  filter(region == "Midwest") %>%
+  mutate(
+    region = if_else(division == "West North Central", 42, division)
+  )
+```
+
+You should also know that there's a great generalization of `dplyr::if_else` for when you want to make multiple substitutions, using `dplyr::case_when`. *Note that the order in which you check for conditions matters.* We can illustrate this using this very opinionated alteration of region labels:
+
+```{r case-when}
+regions %>%
+  mutate(
+    new_regions = case_when(
+      region == "Northeast" ~ "Too dang cold",
+      state == "New York" ~ "Dang Yankees",
+      division == "West North Central" ~ NA_character_,
+      state == "Oregon" | state == "Washington" ~ "Pacific Northwest",
+      TRUE ~ region
+    )
+  ) %>%
+  knitr::kable()
+```
+
+Lots of things to note here!
+
+1.  Conditions are on the left-hand-side (LHS), replacements are on the right-hand-side (RHS), and they're separated by the tilde (`~`) operator.
+2.  You can see that you can mix-and-match conditions as you please. Some of these mutating changes were based off `region`, others off `state`, others still on `division`, and some were based on a logical condition containing the **OR** (`|` vertical bar) operator.
+3.  What happened to our labeling of New York as the "Dang Yankees" regions? Why didn't that work? What would it take to fix it? Try it yourself.
+4.  What does the very last condition do, and what happens if you remove it?
+
+# Factors
+
+The **factor** datatype in R is for discrete variables. These factors can be purely **categorical** (e.g., apple, banana, pear), or can be **ordinal** (i.e., ordered categories, e.g., being the first, second, or third child). In either case, factors have **levels** that correspond to each distinct/discrete value contained in that variable.
+
+To help wrangle factor datatypes, tidyverse automatically loads the package `forcats` when calling `library(tidyverse)`. Functions belonging to `forcats` are easily identifiable, as they're all prefixed by `fct_`.
+
+Conceptually, factors are not hard to understand, but they have historically caused a great deal of drama and headache for R users. This isn't strictly necessary for you to know, but if you're curious, it's time for one of my famous digressions. From 1998-2020, the `utils::read.csv` default behavior was to import all strings (i.e., text-based data) as factors. Why is this a problem? Imagine that you sent out a survey with a free-response question. Every user types in a unique response. Now, you open up the dataset in R, and... instead of treating these responses like text data, your dataframe contains a factor column with thousands of levels. In contrast, `readr::read_csv` has never read strings as factors, and this is a major reason why many people preferred using the tidyverse solution over the base function.
+
+Starting with `R 4.0`, the `utils::read.csv` default has changed so that strings are ***not*** read as factors. This is great, as for the most part, you can treat strings like they're strings. But sometimes, you'll want to convert text-based data into factors. There are two main use cases for doing this:
+
+1.  You're doing some sort of statistical analysis with categorical/ordinal variables, and you need to change what the "reference category" is.
+2.  You're plotting data, and you'd like to (manually) reorder some categories for visual clarity.
+
+We'll ignore the first point for now, as this tutorial series is about data wrangling, not statistics. But, if you move onto the [learning-stats-backwards](https://github.com/psychNerdJae/learning-stats-backwards) tutorial series after completing this series, you'll learn all about reference categories! But the second point is a very useful one, and crops up all the time in the course of data wrangling.
+
+To illustrate, let's open up a dataset containing popular baby names in New York City. In the `data` folder is a CSV file named `Popular_Baby_Names.csv`. Read it into a dataframe. The variable names are not tidy-friendly, so let's do something about that.
+
+There is not a standard capitalization scheme in this dataset, so we'll impose one. You haven't yet learned about this (coming up next!), so you can just use the following to do this:
+
+```{r code-hint-capitalization}
+#| eval: false
+
+baby <- stuff_here %>%
+  mutate(name = str_to_title(childs_first_name)) %>%
+  more_stuff_here
+```
+
+For the time being, let's restrict our analysis so that we're only looking at names of Hispanic female babies. We'll only be looking at the variables `year_of_birth`, `name`, and `count`. The variable name `year_of_birth` is a little clunky, so let's shorten that to `year`.
+
+Do you notice anything else that's "messy" about this dataset? If not, try arranging the dataset by year and count. Do you notice it now? Let's do something about that.
+
+```{r load-baby-names}
+#| code-fold: true
+
+baby <- here("data", "Popular_Baby_Names.csv") %>%
+  read_csv() %>%
+  clean_names() %>%
+  # Standardize name capitalization
+  mutate(name = str_to_title(childs_first_name)) %>%
+  # For simplicity, restrict to a single demographic
+  filter(ethnicity == "HISPANIC" & gender == "FEMALE") %>%
+  select(
+    year = year_of_birth,
+    name, count
+  ) %>%
+  # Make pretty
+  arrange(year, count) %>%
+  # Get rid of duplicate observations
+  distinct()
+```
+
+Okay, now that we've got ourselves a fairly tidy dataset, let's do something fun. One of the big revolutions in text analysis is finding a way to quantify the "similarity" or "distance" between pieces of text. Some of these are more abstract, like assigning words to a particular set of coordinates within high-dimensional embedding spaces. Others are more concrete, like the Levenshtein distance, which is defined as "the minimal number of single-character edits (insertions, deletions or substitutions) required to change one word into the other" ([from Wikipedia](https://en.wikipedia.org/wiki/Levenshtein_distance)).
+
+We'll be using the Levenshtein distance to quantify how (dis)similar names are to each other, and then we'll see how factors can help us plot that data cleanly.
+
+We'll want a variable named `unique_names`, which is a vector containing the 50 most popular names of all time, arranged in alphabetical order. You may find it useful to read the documentation for `tibble::deframe` to accomplish part of this.
+
+```{r get-top-50-names}
+#| code-fold: true
+
+unique_names <- baby %>%
+  group_by(name) %>%
+  mutate(all_time_popularity = sum(count)) %>%
+  ungroup() %>%
+  pivot_wider(names_from = year, values_from = count) %>%
+  slice_max(all_time_popularity, n = 50) %>%
+  select(name) %>%
+  arrange(name) %>%
+  deframe()
+```
+
+Once we have that vector, it's very easy to compute the distance matrix. We haven't worked with matrices before, so let's try to get this back into a dataframe as quickly as possible. You'll note that we're using a function from `stringr`, which we haven't yet covered, but the function name makes it clear what it does.
+
+```{r compute-lev-distances}
+name_distances <- adist(unique_names) %>%
+  as.data.frame() %>%
+  # Label rows
+  mutate(from = unique_names) %>%
+  # Convert into "tidy" format
+  pivot_longer(
+    cols = -from,
+    names_to = "identifier",
+    values_to = "lev_dist"
+  ) %>%
+  # Need to replace automatic header names with labels
+  mutate(
+    identifier = str_remove(identifier, "V"),
+    identifier = as.numeric(identifier)
+  ) %>%
+  left_join(enframe(unique_names, name = "identifier", value = "to")) %>%
+  # Make pretty
+  select(from, to, lev_dist)
+
+name_distances %>%
+  slice(1:20) %>%
+  knitr::kable()
+```
+
+The initial sanity check looks good; the distance between Aaliyah and Aaliyah is zero, as we'd expect.
+
+Now, let's try plotting these results in a **heatmap**.
+
+```{r plot-lev-dist-naive}
+name_distances %>%
+  ggplot(aes(x=to, y=from, fill=lev_dist)) +
+  geom_tile()
+```
+
+Phew. There are obviously many things we could do to improve this plot. For example, we could try rotating the x-axis label text, using a better colormap for the fill aesthetic, and forcing the plot to be square.
+
+```{r plot-lev-dist-better}
+#| code-fold: true
+
+name_distances %>%
+  ggplot(aes(x=to, y=from, fill=lev_dist)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "plasma") +
+  coord_fixed() +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1)
+  )
+```
+
+But there's something a little more subtle that we might want to change also. When we read a heatmap, we're often accustomed to the y-axis labels being ordered from the top-downwards. Here, the plot is organized in alphabetical order from the bottom-upwards.
+
+This is where factors come in handy! I've hidden the code block below so that I don't give away the answers to the previous part of the exercise, but you can go ahead and open it up. The key is using `forcats::fct_rev` to reverse the factor order.
+
+```{r plot-lev-dist-best}
+#| code-fold: true
+
+name_distances %>%
+  mutate(from = fct_rev(from)) %>%
+  ggplot(aes(x=to, y=from, fill=lev_dist)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "plasma") +
+  coord_fixed() +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1)
+  )
+```
+
+Now we can clearly see that (e.g.) Ariana and Arianna are quantified as being very similar to each other, as are Emely, Emily, and Emma. We can also see that Elizabeth is one of the most *dissimilar* names from any other name in this set.
+
+There are many other useful functions in `forcats`, many of which take inspiration from analogous functions for handling non-factor data. We'll cover one more in today's tutorial, which I personally find very useful in my day-to-day workflows.
+
+Let's say that we're particularly interested in highlighting the fact that Elizabeth is very dissimilar from other names, such that we want to place that name as the first entry in the heatmap. This is very easy to do using `forcats::fct_relevel`, which allows you to manually specify factor ordering.
+
+```{r plot-lev-dist-relevel}
+#| code-fold: true
+
+name_distances %>%
+  mutate(
+    from = fct_relevel(from, "Elizabeth"),
+    to = fct_relevel(to, "Elizabeth"),
+    from = fct_rev(from)
+  ) %>%
+  ggplot(aes(x=to, y=from, fill=lev_dist)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "plasma") +
+  coord_fixed() +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1)
+  )
+```
+
+Note that other levels of the fact have been left alone. You can do this with as many levels as you'd like. Let's do it with Kimberly too.
+
+```{r plot-lev-dist-relevel-2}
+#| code-fold: true
+
+name_distances %>%
+  mutate(
+    from = fct_relevel(from, "Elizabeth", "Kimberly"),
+    to = fct_relevel(to, "Elizabeth", "Kimberly"),
+    from = fct_rev(from)
+  ) %>%
+  ggplot(aes(x=to, y=from, fill=lev_dist)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "plasma") +
+  coord_fixed() +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1)
+  )
+```
+
+# Strings
+
+The **string** datatype is pretty easy to understand: it's basically anything that is stored as text. This includes numbers that aren't really numbers, like ZIP codes. (Remember our first tutorial, where we encountered difficulties with ZIP codes like `02912` getting converted into the number `2,912`?)
+
+Historically, R has had great tools for working with numbers, and pretty mediocre tools for working with strings (not least reading strings as factors!). This is what motivated the development of the `stringr` package, which is part of the default set of tidyverse packages loaded when calling `library(tidyverse)`.
+
+It's fairly easy to find `stringr` functions, as they're all prefixed by `str_` before the description of what they do. In my day-to-day workflows, I typically think about `stringr` functions as they pertain to two major operations: `mutate` and `filter`, and we'll go over examples of each.
+
+## Concatenation
+
+This is about the easiest example we can use to introduce `stringr`. We know that we can concatenate things into vectors using `c(...)`. For example:
+
+```{r concat-vector-example}
+c("apple", "banana", "pear")
+```
+
+Using similar syntax, we can concatenate strings. If all inputs are "flat" (i.e., not vectors), then the output will also be a flat string. If a single input is a vector, but all other inputs are flat, then the output will combine the flat string with all elements of the vector. Finally, if all inputs are vectors, then all inputs must have the same number of elements, and the output will combine the vectors element-wise.
+
+```{r concat-string-example}
+# All inputs are flat
+str_c("I need", "apples, bananas, and pears", sep = " ")
+
+# One input is a vector
+str_c("I need", c("apples", "bananas", "pears"), sep = " ")
+
+# Multiple inputs are vectors
+str_c(
+  c("I need", "I want", "I like"),
+  c("apples", "bananas", "pears"),
+  sep = " "
+)
+```
+
+Concatenation is a pretty simple example of a string mutating operation. How about string filtering operations? To get some practice with that, let's open up a property tax dataset from the city of Providence, RI.
+
+```{r load-tax}
+#| class.source = "fold-hide"
+
+tax <- here("data", "PVD_2020_Property_Tax_Roll.csv") %>%
+  read_csv() %>%
+  clean_names() %>%
+  select(short_desc, zip_postal)
+
+# Get a sense for what this looks like...
+tax %>%
+  slice(1:10) %>%
+  knitr::kable()
+```
+
+Based on the descriptions provided in the column `short_desc`, let's try to find all of the unique property types that exist in this dataset.
+
+```{r print-unique-properties}
+#| class.source = "fold-hide"
+
+tax %>%
+  select(short_desc) %>%
+  distinct() %>%
+  arrange(short_desc) %>%
+  deframe()
+```
+
+## Capitalization
+
+Okay, let's say that we're working for the city government, and there's an urban planner who's interested in seeing whether certain ZIP codes contain more commercial versus residential condos. Already, we might suspect this will require the use of a filtering operation. If you've completed the mini-exercise from the previous paragraph, you know that this is one way you could solve this problem:
+
+```{r naive-str-filter}
+tax %>%
+  filter(
+    short_desc == "Commercial Condo" |
+    short_desc == "Residential Condo"
+  ) %>%
+  slice(1:10) %>%
+  knitr::kable()
+```
+
+That solution is easy enough when we're working with a relatively simple toy problem from a relatively simple toy dataset. But, things can quicklyget more complicated.
+
+What if, in the future, the city decides to classify some properties as being "industrial" condos? (Ignore the fact that there's no such thing as an industrial condo, it's a toy problem.) Then, you'd be missing out on an entire class of condos because you're only looking for two classes of condos.
+
+Or perhaps, in the future, the city might release datasets where the descriptions are written as `"commercial"` and `"residential"` condos. Obviously, to a human, we know those are the same as `"Commercial"` and `"Residential"` condos, but computers don't know that. To prove this, try running the following:
+
+```{r case-inequality}
+"residential" == "Residential"
+
+tax %>%
+  filter(
+    short_desc == "commercial condo" |
+    short_desc == "residential condo"
+  ) %>%
+  knitr::kable()
+```
+
+In both of these relatively plausible cases, our code would fail to work with updated versions of the city's property tax datasets. We'd like to future-proof our code as much as we can. But how?
+
+When working with text data, one of the most common mutating operations is to standardize capitalization to avoid matching errors. This is trivially easy to do with `stringr`.
+
+```{r mutate-string-case}
+tax %>%
+  select(short_desc) %>%
+  mutate(
+    # everything lowercase
+    lower_desc = str_to_lower(short_desc),
+    # EVERYTHING UPPERCASE
+    upper_desc = str_to_upper(short_desc),
+    # Everything uses sentence case
+    sentence_desc = str_to_sentence(short_desc),
+    # Everything Uses Title Case
+    title_desc = str_to_title(short_desc)
+  ) %>%
+  # To show off certain observations
+  slice(15:25) %>%
+  knitr::kable()
+```
+
+This helps us because once we're working with a standardized format, we can look for "condo" in whatever capitalization we'd like.
+
+Now, how do we do more intelligent string filtering? For this particular toy problem, this is not hard at all.
+
+```{r filter-easy}
+tax %>%
+  mutate(short_desc = str_to_lower(short_desc)) %>%
+  filter(str_detect(short_desc, "condo")) %>%
+  slice(1:10) %>%
+  knitr::kable()
+```
+
+## Alternation
+
+Here's another example of string filtering. Let's say we're interested in finding observations related to `Municipal`, `State`, or `Federal` properties. We can do this very easily using the alternation operator `|` ("vertical bar"). Recall that the vertical bar operator is also used to indicate logical **OR**, and this is a very analogous use of that operator.
+
+```{r regex-alternation}
+tax %>%
+  filter(str_detect(short_desc, "Municipal|State|Federal")) %>%
+  # To show off certain observations
+  slice(25:35) %>%
+  knitr::kable()
+```
+
+# Regular expressions
+
+Those string filtering examples were pretty easy, so let's try something harder. The city government of Providence now wants us to say something about the distribution of `Commercial I` properties in various ZIP codes. We know *a priori* that `Commercial II` properties are part of the 2020 dataset, and we're not sure whether `Commercial III` or `Commercial IV` properties might show up in future datasets. Naively, we can try doing the exact same thing we did before:
+
+```{r filter-hard}
+tax %>%
+  mutate(short_desc = str_to_lower(short_desc)) %>%
+  filter(str_detect(short_desc, "commercial i")) %>%
+  slice(1:5) %>%
+  knitr::kable()
+```
+
+To our surprise, we get both `I` and `II` returned in the results. Why? It's because `stringr` functions don't perform literal pattern matching, but instead use **regular expressions** ("regex"). Regex is not an R-specific construction, and is used in (virtually?) all modern programming languages, though the exact implementation can differ from language to language.
+
+I cannot teach you regex in this tutorial. There are too many nuances and complexities, and it's beyond the scope of what we're trying to do here. As usual, my goal is not to guide you to complete data wrangling mastery, but to build up enough scaffolding that you're capable enough to learn more advanced topics on your own.
+
+However, I *can* provide a few toy examples to help you gain a quick intuition, and once you have an intuition, you can get exact details from the [comprehensive guide](https://stringr.tidyverse.org/articles/regular-expressions.html) on the `stringr` documentation website, which I reference at least twice a week.
+
+## Regex anchoring
+
+The big idea behind regex is that you can use abstract patterns to match specific text features. For example, you can use string **anchor**ing to match the start of a string using `^` and the end of a string using `$`. This is sufficient to devise one solution to our problem:
+
+```{r regex-anchoring}
+tax %>%
+  mutate(short_desc = str_to_lower(short_desc)) %>%
+  filter(str_detect(short_desc, "^commercial i$")) %>%
+  slice(1:5) %>%
+  knitr::kable()
+```
+
+Why does this anchoring solution work? We'll use `str_extract_all` to help us gain an intuition.
+
+```{r extract-anchoring}
+# This replicates the pattern we'd first tried
+# The pattern matches both strings!
+str_extract_all(
+  string = c("commercial i", "commercial ii"),
+  pattern = "commercial i"
+)
+
+# Now we can see why anchoring solves this problem!
+str_extract_all(
+  string = c("commercial i", "commercial ii"),
+  pattern = "^commercial i$"
+)
+```
+
+On your own, see what happens when you remove *either* the carrot *or* the dollar operator. Why does your output look like this?
+
+## Regex multi-matching
+
+Anchoring is an intuitive introduction to how you can use abstract patterns to match strings of human-readable text. It's particularly intuitive because there can only ever be one string start/end. But we still haven't solved the broader problem of exactly matching strings like `Commercial I` if it's part of a longer string. For example:
+
+```{r regex-multi-1}
+str_extract_all(
+  string = str_to_lower(
+    str_c(
+      "Commercial I? I propose that in the future, we reclassify",
+      "Commercial I properties as Commercial II, and",
+      "Commercial II properties as Commercial IV.",
+      sep = " "
+    )
+  ),
+  pattern = "commercial i"
+)
+```
+
+We could, however, take advantage of the fact that there is always a space surrounding the string `Commercial I`, distinguishing it from other similar strings. The regex pattern for spaces is `\s`. However, `\` is used as an **escape** pattern in regex, which means that `\s` means something like "look for the literal character `s`." In order to escape the escape pattern, we'll need to format the regex pattern as `\\s`.
+
+::: callout-tip
+Confused by escaping? Try reading the [`stringr` documentation](https://stringr.tidyverse.org/articles/regular-expressions.html#escaping), which goes into much more detail about how this works.
+:::
+
+```{r regex-multi-2}
+str_extract_all(
+  string = str_to_lower(
+    str_c(
+      "Commercial I? I propose that in the future, we reclassify",
+      "Commercial I properties as Commercial II, and",
+      "Commercial II properties as Commercial IV.",
+      sep = " "
+    )
+  ),
+  pattern = "\\scommercial i\\s"
+)
+```
+
+This is closer to what we want, but there are two glaring problems. First, we haven't detected both instances of the pattern; the first instance is not preceded by a space. Second, the matched string annoyingly includes spaces at both ends.
+
+There are a few different ways we could do multi-matching to get around this problem. We can create a **grouping**, such that we're happy matching *either* a space *or* some other pattern. Just as parentheses allow you to group expressions in algebra, they allow you to group patterns in regex. We can also take advantage of classes, patterned as `[...]`. If we wanted to multi-match only the letters `a`, `b`, and `c`, we could do that by creating a class `[abc]`. There are also some pre-built classes, like `[[:punct:]]` for punctuation and `[[:alpha:]]` for the alphabet.
+
+To catch the first instance of `Commercial I`, we'll let our regex match spaces or string-start at the beginning. We'll implement that as an alternator inside a grouping. We'll also let our regex match spaces or punctuation at the end, implemented as a class.
+
+```{r regex-multi-3}
+str_extract_all(
+  string = str_to_lower(
+    str_c(
+      "Commercial I? I propose that in the future, we reclassify",
+      "Commercial I properties as Commercial II, and",
+      "Commercial II properties as Commercial IV.",
+      sep = " "
+    )
+  ),
+  pattern = "(^|\\s)commercial i[\\s[:punct:]]"
+)
+```
+
+We still have the annoying problem of matching all of the superfluous stuff surrounding the pattern of interest. One of my favorite patterns is `\\b` for any kind of word boundary. This includes string start/end, punctuation, spaces, and other kinds of formatting like paragraph breaks. It comes with the distinct advantage of *not* returning any of those matches in the output.
+
+```{r regex-multi-4}
+str_extract_all(
+  string = str_to_lower(
+    str_c(
+      "Commercial I? I propose that in the future, we reclassify",
+      "Commercial I properties as Commercial II, and",
+      "Commercial II properties as Commercial IV.",
+      sep = " "
+    )
+  ),
+  pattern = "\\bcommercial i\\b"
+)
+```
+
+## Regex repetition
+
+Another useful abstract pattern is matching **repetitions** of a desired text feature. Let's pretend that in the future, the city of Providence does add `Commercial III` and `Commercial IV` to their datasets. If we were interested in matching `I-III`, but not `IV`, how would we do this? We can use some of the following patterns:
+
+-   `*`: 0 or more matches
+-   `?`: 0 or 1 matches
+-   `+`: 1 or more matches
+-   `{n}`: exactly n matches
+-   `{n,}`: at least n matches
+-   `{n,m}`: at least n matches, and at most m matches
+
+```{r regex-repetition}
+str_extract(
+  string = c(
+    "commercial i", "commercial ii", "commercial iii", "commercial iv"
+  ),
+  pattern = "^commercial i*$"
+)
+
+str_extract(
+  string = c(
+    "commercial i", "commercial ii", "commercial iii", "commercial iv"
+  ),
+  pattern = "^commercial i?$"
+)
+
+str_extract(
+  string = c(
+    "commercial i", "commercial ii", "commercial iii", "commercial iv"
+  ),
+  pattern = "^commercial i+$"
+)
+
+# Note that we've stopped using the anchors, for demonstration purposes
+str_extract(
+  string = c(
+    "commercial i", "commercial ii", "commercial iii", "commercial iv"
+  ),
+  pattern = "commercial i{2}"
+)
+
+str_extract(
+  string = c(
+    "commercial i", "commercial ii", "commercial iii", "commercial iv"
+  ),
+  pattern = "commercial i{2,}"
+)
+
+str_extract(
+  string = c(
+    "commercial i", "commercial ii", "commercial iii", "commercial iv"
+  ),
+  pattern = "commercial i{2,3}"
+)
+```
+
+Try working through these thought exercises on your own:
+
+-   In the examples where we'd used the `{n}` pattern, why didn't we ever start with 1?
+
+-   Along the same lines, let's say that we were interested in matching the `i` in `commercial i` exactly once. Naively, we might think to specify `commercial i{1}`. Why would that fail? What are better solutions to this problem?
+
+# Exercises
+
+A general note: these are hard exercises, and you won't necessarily find the answers in this tutorial. Learning to Google (or, if you really care about privacy, [DuckDuckGo](https://duckduckgo.com/)) answers to your coding questions is itself an essential skill. So, be patient with yourself. Struggling through these exercises will help you understand this material at a deeper level.
+
+## Exercise 1
+
+If you've ever bought anything online in the USA, you've probably had the annoying experience of being forced to select your state from a long drop-down menu, instead of just typing out the state name. Have you ever wondered why this is such a common user experience design?
+
+To give you a sense, let's open up a 2017 dataset of people's Halloween candy preferences. Let's say that we're interested in knowing how candy preferences differ within the US, based on what state people are from. We'll take a quick look at what we're working with.
+
+```{r load-candy}
+candy <- here("data", "candyhierarchy2017.csv") %>%
+  read_csv(locale = locale(encoding = "latin1")) %>%
+  pivot_longer(
+    cols = starts_with("Q6"),
+    names_to = "item",
+    values_to = "rating"
+  ) %>%
+  clean_names() %>%
+  select(
+    id = internal_id,
+    country = q4_country,
+    state = q5_state_province_county_etc,
+    item, rating
+  ) %>%
+  filter(!is.na(country))
+
+unique(candy$country)
+```
+
+This kind of free-response nonsense is exactly why online retailers force you to select options from a predefined list.
+
+The dataset is what it is. We'll just have to do our best to wrangle it into a better shape. The first exercise is to write a regex that catches all/most of the respondents from the United States.
+
+Frankly, this is an overwhelming ask, so let's break this task up into pieces.
+
+For starters, modify the dataframe to make sure that trivial capitalization differences will not get in your way.
+
+```{r exercise-1}
+#| eval: false
+#| echo: false
+
+candy %>%
+  mutate(country = str_to_lower(country))
+```
+
+
+## Exercise 2
+
+Match common variants of "USA". You should be able to match *all* of the following using a *single* regex, *without* using the alternator operator (`|`).
+  - `usa`
+  - `u.s.a`
+  - `u s a`
+  - `us`
+  - `u.s.`
+  - `u s`
+
+```{r exercise-2}
+#| eval: false
+#| echo: false
+
+str_detect(
+  string = c("usa", "u.s.a.", "u s a", "us", "u.s.", "u s"),
+  pattern = "u[\\.\\s]?s[\\.\\s]?(a[\\.\\s])*"
+)
+```
+
+## Exercise 3
+
+Match common variants of "United States of America". *All* of the following can be matched using a *single* regex, *without* using the alternator operator (`|`). If you happen to notice that this might be problematic, just go with it for now...
+  - `united states of america`
+  - `united states`
+  - `america`
+
+```{r exercise-1-3}
+#| eval: false
+#| echo: false
+
+str_detect(
+  string = c(
+    "united states of america",
+    "united states",
+    "america"
+  ),
+  pattern = "(united states)?(america)?"
+)
+```
+
+## Exercise 4
+
+Now try using your regex constructions to filter the dataframe. Since you have two patterns, use an alternator operator to combine both regex patterns into the same string. Does it work as you would have expected? This illustrates how you can easily write a regex pattern that "looks" correct, matches all desired strings, but still lacks the specificity to *avoid* matching undesired strings. That's what makes regex so hard!
+
+Unfold the following if you want a hint...
+
+::: {.callout-note collapse="true"}
+In exercise 3, I asked you to write a single no-alternator regex for all the variants of "United States of America". If we're not thinking about it too hard, this seems sensible. Using an alternator basically means writing two different regex patterns, and we can use our human intelligence to recognize that all variants of "United States of America" are clearly similar to each other. Why shouldn't we value parsimony when we can have it?
+
+However, writing a no-alternator regex results in matching not only all three of the test strings, but unexpectedly matching *all* strings, like "Canada" and "Sweden". Why does this happen with the regex from exercise 3, and not the regex from exercise 2?
+:::
+
+```{r exercise-4}
+#| eval: false
+#| echo: false
+
+candy %>%
+  mutate(country = str_to_lower(country)) %>%
+  filter(
+    str_detect(
+      country,
+      str_c(
+        "u[\\.\\s]?s[\\.\\s]?(a[\\.\\s])*",
+        "|",
+        "(united states)?(america)?"
+      )
+    )
+  ) %>%
+  select(country) %>%
+  distinct() %>%
+  deframe()
+```
+
+## Exercise 5
+
+Once you've fixed your regex, find a way to look at all of the remaining strings that have *not* been matched. (Hint: look at the documentation for `str_detect` for a handy argument.) You'll note that they fall into about five distinct categories:
+  1. Misspellings of USA, United States, America, etc.
+  2. The names of other countries (as expected)
+  3. The names of U.S. states or cities (either written out or abbreviated)
+  4. Jokes
+  5. Otherwise inexplicable responses
+
+```{r exercise-5}
+#| eval: false
+#| echo: false
+
+candy %>%
+  mutate(country = str_to_lower(country)) %>%
+  filter(
+    str_detect(
+      country,
+      str_c(
+        "u[\\.\\s]?s[\\.\\s]?(a[\\.\\s])*",
+        "|",
+        "united states",
+        "|",
+        "america"
+      ),
+      negate = TRUE
+    )
+  ) %>%
+  select(country) %>%
+  distinct() %>%
+  deframe()
+```
+
+## Exercise 6
+
+It would be a giant pain to write regex patterns for all of the misspelled references to the US. Is there an easier way to do this using our existing regex patterns? Earlier, we used Levenshtein distance to quantify the number of character changes it would take to transform one string into another. With relatively minimal effort, we may be able to leverage this to our advantage, and catch most of the stragglers.
+
+```{r exercise-1-6}
+#| eval: false
+#| echo: false
+
+# Testing to see if this works...
+candy %>%
+  mutate(country = str_to_lower(country)) %>%
+  mutate(test = adist(country, "united states")[,1]) %>%
+  filter(test != 0) %>%
+  arrange(test) %>%
+  print(n = 30)
+
+# More testing...
+candy %>%
+  mutate(country = str_to_lower(country)) %>%
+  mutate(test = adist(country, "america")[,1]) %>%
+  filter(test != 0) %>%
+  arrange(test) %>%
+  print(n = 30)
+
+candy %>%
+  mutate(country = str_to_lower(country)) %>%
+  mutate(
+    country = case_when(
+      adist(country, "united states")[,1] == 1 ~ "united states",
+      adist(country, "america")[,1] <= 2 ~ "america",
+      TRUE ~ country
+    )
+  ) %>%
+  filter(
+    str_detect(
+      country,
+      str_c(
+        "u[\\.\\s]?s[\\.\\s]?(a[\\.\\s])*",
+        "|",
+        "united states",
+        "|",
+        "america"
+      ),
+      negate = TRUE
+    )
+  ) %>%
+  select(country) %>%
+  distinct() %>%
+  deframe()
+```
+
+## Exercise 7
+
+Some people clearly misread the prompts. One such respondent is from "USA, North Carolina". Another is from "Tehama, California". Can we do anything about this to catch more respondents from the USA? R comes pre-bundled with vectors containing the names and abbreviations of US states. We might be able to use this to our advantage.
+
+```{r demo-state-vectors}
+state.name
+state.abb
+```
+
+```{r exercise-7}
+#| eval: false
+#| echo: false
+
+candy %>%
+  mutate(country = str_to_lower(country)) %>%
+  mutate(
+    country_clean = case_when(
+      adist(country, "united states")[,1] == 1 ~ "united states",
+      adist(country, "america")[,1] <= 2 ~ "america",
+      country %in% str_to_lower(state.name) ~ "america",
+      TRUE ~ country
+    )
+  ) %>%
+  filter(
+    str_detect(
+      country_clean,
+      str_c(
+        "u[\\.\\s]?s[\\.\\s]?(a[\\.\\s])*",
+        "|",
+        "united states",
+        "|",
+        "america"
+      ),
+      negate = TRUE
+    )
+  ) %>%
+  select(country_clean) %>%
+  distinct() %>%
+  deframe()
+```
+
+## Exercise 8
+
+Inspect the remaining country names that we have not yet matched. How well have we done? Could we do better? If so, what's the effort tradeoff between getting results that are "mostly" right and getting results that are "completely" right? In your assessment, is it worth expending more effort to match more cases? Then, consider this: if there's no limit to the effort you'd expend to make sure we catch all possible cases, why use regex instead of manually finding all matches using human intelligence?
+
+## Exercise 9
+
+Now that we can filter respondents from the USA, let's clean up state names from that subset of observations. For our purposes, let's relabel all states by their full names. So if someone says they're from "WA", we'll want to change that to "Washington". Remember that we'll also want to catch responses like being from "USA, North Carolina" as well. ***This is going to be hard. I found it hard. Be patient with yourself.***
+
+Given that it takes a while to run the final set of commands, I'd recommend saving the dataframe as something like `candy_clean`.
+
+::: callout-tip
+You may find it useful to look at some `stringr` functions we haven't explicitly covered in today's tutorial, possibly including `str_extract` and `str_flatten`. You may also find it useful to look up the documentation for `str_c` to learn about some arguments we haven't yet used.
+
+When replacing state names ("WA" to "Washington"), try seeing if a **join** operation helps solve your problem.
+
+Given the complexity of what you're doing here, it's probably worthwhile to write some helpful comments to remind yourself what each "chunk" of code does!
+:::
+
+```{r exercise-9}
+#| echo: false
+#| message: false
+
+state_df <- tibble(
+  state_name = str_to_lower(state.name),
+  state_abb = str_to_lower(state.abb)
+)
+
+candy_clean <- candy %>%
+  # Prevent capitalization match issues
+  mutate(
+    country = str_to_lower(country),
+    state = str_to_lower(state)
+  ) %>%
+  # Try to identify all USA respondents, including misspellings
+  mutate(
+    country_clean = case_when(
+      adist(country, "united states")[,1] == 1 ~ "united states",
+      adist(country, "america")[,1] <= 2 ~ "america",
+      # Some people put US state names as the country name
+      country %in% str_to_lower(state.name) ~ "america",
+      TRUE ~ country
+    )
+  ) %>%
+  # Get a clean list of all US state names, where they exist
+  mutate(
+    # First pass w/ obvious regex
+    state_clean = str_extract(
+      string = state,
+      pattern = str_c(
+        str_c("\\b", str_to_lower(state.name), "\\b", collapse = "|"),
+        str_c("\\b", str_to_lower(state.abb), "\\b", collapse = "|")
+      )
+    ),
+    # Catch people who put the state name as the country name
+    state_clean = if_else(
+      condition = is.na(state_clean),
+      true = str_extract(
+        string = country,
+        pattern = str_c(
+          str_c("\\b", str_to_lower(state.name), "\\b", collapse = "|"),
+          str_c("\\b", str_to_lower(state.abb), "\\b", collapse = "|")
+        )
+      ),
+      false = state_clean
+    ),
+  ) %>%
+  # Limit to USA respondents only
+  filter(
+    str_detect(
+      country_clean,
+      str_c(
+        "u[\\.\\s]?s[\\.\\s]?(a[\\.\\s])*",
+        "|",
+        "united states",
+        "|",
+        "america"
+      )
+    )
+  ) %>%
+  # Replace state abbreviations w/ state names
+  left_join(state_df, by = c("state_clean" = "state_abb")) %>%
+  mutate(
+    state_clean = if_else(
+      !is.na(state_name),
+      state_name,
+      state_clean
+    )
+  ) %>%
+  select(-c(country_clean, state_name))
+
+```
+
+## Exercise 10
+
+We're in the home stretch now. Get rid of the text `Q6 | ` from the column `item`. Fix the capitalization of the `state_clean` column (e.g., so that "new mexico" becomes "New Mexico"). Recode the ratings so that "DESPAIR" is coded as -1, "JOY" is coded as +1, and "MEH" is coded as 0. Non-responses should be treated like "MEH". Then, *within each state*, find the 10 candies receiving the most positive ratings. Use `dplyr::min_rank` to handle ties. You'll notice that apostrophes (like in "Reese's" or "M&M's") got encoded as `Õ`, so correct this.
+
+Finally, plot each state's most loved/hated candies in ranked order. Annoyingly, there's no `tidyverse` solution for accomplishing this, so we'll have to make use of an external package called [`tidytext`](https://stackoverflow.com/questions/66483116/r-tidyverse-ordering-factors-within-group-with-duplicate-labels-and-plotting). Go ahead and install that package, then use it to reproduce the plot below. Use the StackOverflow post as a template for how to do this.
+
+There are too many states for you to cleanly visualize all of them, so go ahead and pick some of your favorite states to compare. Some labels are annoyingly long, so you may be interested in using `stringr::str_wrap` to fix this.
+
+This was an especially tough set of exercises -- starting to approach the difficulty of wrangling real-world datasets you might encounter in the wild. Congratulations on making this far!
+
+```{r exercise-10}
+#| echo: false
+#| message: false
+#| fig-width: 6
+#| fig-height: 10
+
+candy_clean %>%
+  mutate(
+    state_clean = str_to_title(state_clean),
+    item = str_remove(item, "^Q6 \\| "),
+    rating = case_when(
+      rating == "DESPAIR" ~ -1,
+      rating == "MEH" ~ 0,
+      rating == "JOY" ~ 1,
+      TRUE ~ 0
+    )
+  ) %>%
+  drop_na() %>%
+  filter(
+    state_clean %in% c(
+      "North Carolina", "Tennessee",
+      "California", "Rhode Island", "Maryland"
+    )
+  ) %>%
+  group_by(state_clean, item) %>%
+  summarise(rating = mean(rating), .groups = "drop") %>%
+  group_by(state_clean) %>%
+  mutate(rank = min_rank(desc(rating))) %>%
+  ungroup() %>%
+  arrange(state_clean, desc(rating)) %>%
+  filter(rank <= 10) %>%
+  mutate(
+    item = str_replace(item, "Õ", "'"),
+    item = str_wrap(item, width = 15),
+    item = tidytext::reorder_within(item, by = rating, within = state_clean)
+  ) %>%
+  ggplot(aes(x=rating, y=item)) +
+  ggtitle("Top-ranked Halloween candies") +
+  geom_col(show.legend = FALSE, fill = "#FF7600", width = 0.6) +
+  tidytext::scale_y_reordered() +
+  facet_wrap(~state_clean, scales = "free") +
+  theme(
+    panel.background = element_rect(fill = "#52006A"),
+    panel.grid = element_blank(),
+    plot.background = element_rect(fill = "black"),
+    strip.background = element_rect(fill = "#C70D3A"),
+    strip.text = element_text(color = "black", face = "bold"),
+    axis.text = element_text(color = "white"),
+    plot.title = element_text(size = 22, color = "white", hjust = 0.5),
+    plot.title.position = "plot"
+  )
+```
+
+# Next time...
+
+We're very nearly done with our series! In the next (and probably final) session, we'll walk through some examples showing how iteration can be used to apply the same operation over and over. Along the way, we'll learn a little about **functional programming** as it pertains to tidyverse approaches to iteration.

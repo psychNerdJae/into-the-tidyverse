@@ -1,27 +1,38 @@
 ---
-title: "Session 1: Loading data"
+title: "Into the tidyverse, Session 3"
+subtitle: "Loading data"
 author: "Jae-Young Son"
-output:
-  html_document:
-    code_download: true
-    code_folding: show
-    toc: TRUE
-    toc_float: TRUE
+date: "2020-11-02"
+date-modified: "2022-12-01"
+theme:
+  light: flatly
+  dark: darkly
+format:
+  html:
+    toc: true
+    toc-location: left
+    code-fold: show
+    code-line-numbers: true
+    embed-resources: true
 ---
-
-This document was most recently knit on `r Sys.Date()`.
 
 # Introduction
 
 The first step of any data analysis is (somewhat anti-climatically) figuring out how to load your data. This may seem trivial, but it can be surprisingly difficult, and it is critical to understand how this works before you move on to bigger and more interesting topics.
 
-Here's an example of how it can go terribly wrong. According to a [2016 study](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-1044-7), about 20% of the reviewed genetics papers contained errors because Microsoft Excel misinterpreted abbreviations like Septin 2 (SEPT2) as *dates* (September 2nd). This resulted in the HUGO Gene Nomenclature Committee *renaming* gene abbreviations so that Excel doesn't keep messing with people's data (and no, [this is not a joke](https://www.msn.com/en-us/news/technology/scientists-rename-genes-because-microsoft-excel-reads-them-as-dates/ar-BB17EorZ).
+Here's an example of how it can go terribly wrong. According to a [2016 study](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-1044-7), about 20% of the reviewed genetics papers contained errors because Microsoft Excel misinterpreted abbreviations like Septin 2 (SEPT2) as *dates* (September 2nd). This resulted in the HUGO Gene Nomenclature Committee *renaming* gene abbreviations so that Excel doesn't keep messing with people's data (and no, [this is not a joke](https://www.msn.com/en-us/news/technology/scientists-rename-genes-because-microsoft-excel-reads-them-as-dates/ar-BB17EorZ)).
 
 With this cautionary tale in mind, let's learn something about how data are commonly saved, and then work through some examples of how to load data. Along the way, we're going to pick up some fundamental prerequisite knowledge about programming.
 
+::: callout-note
 Before we start, you should create a new R script inside the `sandbox` folder, where you'll write code corresponding to this tutorial. Please make sure to *save it* in that folder (it's fine that you're saving an empty script for now, you'll fill it in as we go).
+:::
 
 # Prerequisite knowledge
+
+::: callout-note
+Some of this is review from session 1, but now we'll talk about R-specific applications!
+:::
 
 ## Functions and libraries
 
@@ -37,7 +48,7 @@ A **library** (sometimes referred to as a **package**) is simply a collection of
 
 If it helps, you can think of a library in a pretty literal sense. One reason why you go to a library is to check out reference books. There is knowledge (functions) you want to access, but your mind (computer's memory) has a limited capacity to store the fine-grained details. So, in order to remind yourself of those details, you open up a reference book (load a library and its functions).
 
-Before we can use these libraries, we must install them. Let's install a few libraries that are particularly important. Note that if you've installed these libraries in the past, you don't need to do it again! You should type this into your console, rather than your script.
+Before we can use these libraries, we must install them. Let's install a few libraries that are particularly important. You should type this into your console, rather than your script.
 
 ```{r install-packages}
 #| eval = FALSE
@@ -46,9 +57,13 @@ install.packages("here")
 install.packages("janitor")
 ```
 
-In this series, we'll be making heavy use of the `tidyverse`. The tidyverse is not a single library, but a *collection* of libraries that are designed to work well together. When you get good at using R, you'll load the entire tidyverse at once because you'll know how to use all of the individual libraries in conjunction. However, since we're learning how each library works, we'll load only specific libraries related to specific goals.
+::: callout-warning
+Note that if you've installed these libraries in the past, you don't need to do it again! Call `install.packages` when you want to install a package for the first time, or when you want to update a package to the latest version. We'll later learn how to load installed packages.
+:::
 
-Here, our goal is to read data, and so we'll focus on using the `readr` library (part of the tidyverse).
+In this series, we'll be making heavy use of the **`tidyverse`**. The tidyverse is not a single library, but a *collection* of libraries that are designed to work well together. When you get good at using R, you'll load the entire tidyverse at once because you'll know how to use all of the individual libraries in conjunction. However, since we're learning how each library works, we'll load only specific libraries related to specific goals.
+
+Here, our goal is to read data, and so we'll focus on using the **`readr`** library (part of the tidyverse).
 
 ## Variables
 
@@ -74,12 +89,9 @@ You are probably familiar with the Microsoft Excel formats `.xls` and `.xlsx`, w
 2.  With Excel files that contain multiple spreadsheets, it can be difficult to anticipate which sheet you want to load, as virtually no other software makes regular use of multi-spreadsheet formats.
 3.  The Excel format is a **proprietary** format, meaning that Microsoft owns the intellectual rights to the format and exercises complete control over how it works. If Microsoft decided tomorrow that they wanted to completely change how the Excel data format works, and/or demanded that everyone start paying lots of money to continue using this format, we would have no choice but to obey. If I can get on my soapbox for a moment, I believe that is antithetical to the spirit of open science. Practically speaking, there will be times when you need to use proprietary data formats. We will cover these in a later tutorial. But for now, we will focus on the data formats that are most commonly used in science and government.
 
-By far, the most common format we'll use is `.csv`, which stands for Comma Separated Values. The name makes sense when you open up a CSV in a plaintext editor and look at how the data are formatted. In the below picture, you can see the standard tabular view of the data in the Excel window. In the text editor window, you can see the same data, but in its "raw" plaintext format. Each cell of the Excel spreadsheet corresponds to a text value that is separated by a comma - hence, comma separated values.
+By far, the most common format we'll use is `.csv`, which stands for Comma Separated Values. The name makes sense when you open up a CSV in a plaintext editor and look at how the data are formatted. In the below picture, you can see the standard tabular view of the data in the Excel window. In the text editor window, you can see the same data, but in its "raw" plaintext format. Each cell of the Excel spreadsheet corresponds to a text value that is separated by a comma -- hence, comma separated values.
 
-```{r csv-img}
-#| echo = FALSE
-knitr::include_graphics(here::here("code", "images", "csv_plaintext.png"))
-```
+![](./images/csv_plaintext.png){fig-alt="On the left is a CSV open in Microsoft Excel. It looks like a regular table of data. On the right is the same CSV open in a plaintext editor. Each row is clearly a row of the data. The columnar structure is harder to see, however, since the values in each column are separated only by commas."}
 
 Any guesses how a `.tsv` (Tab Separated Values) file might be formatted?
 
@@ -117,13 +129,13 @@ This URL tells us a lot already. The data lives on `githubusercontent.com`, in a
 
 The same idea can be applied to your computer's hard drive. I have an (older) copy of these data at `/Users/jaeyoungson/GitHub/into-the-tidyverse/data/time_series_covid19_confirmed_US.csv`. This path tells me that the CSV `time_series_covid19_confirmed_US.csv` lives inside a folder called `data`, which lives inside `into-the-tidyverse`, which lives inside `GitHub`, which is associated with the user `jaeyoungson`.
 
-You would typically need to type out the full path every time you wanted R to find a file. This gets tiresome, so we're going to be using a neat trick using the `here` library. In short, this library starts with the folder where your code is stored, then checks whether there is a file with the extension `.Rproj`. If there isn't, it goes up to the parent folder and does the same thing over and over until it finds the `.Rproj` file. If you have organized your project files in a sensible way, this makes it extremely convenient to perform pathing. If this explanation makes no sense to you, check out the examples below and see if you can figure it out.
+You would typically need to type out the full path every time you wanted R to find a file. This gets tiresome, so we're going to be using a neat trick using the **`here`** library. In short, this library starts with the folder where your code is stored, then checks whether there is a file with the extension `.Rproj`. If there isn't, it goes up to the parent folder and does the same thing over and over until it finds the `.Rproj` file. If you have organized your project files in a sensible way, this makes it extremely convenient to perform pathing. If this explanation makes no sense to you, check out the examples below and see if you can figure it out.
 
 # Reading data
 
 Today's dataset is adapted from [property tax rolls from the city of Providence, RI](https://data.providenceri.gov/Neighborhoods/2020-Property-Tax-Roll/y9h5-fefu).
 
-First things first, we'll load the libraries we need for today's tutorial. Note that we're using the tidyverse libraries `readr` and `tibble`. The `here` library is used for convenient pathing, and you'll note that it gives you a message about where it will start pathing. The `tictoc` library is used to time how long it takes to run various functions.
+First things first, we'll load the libraries we need for today's tutorial. Note that we're using the tidyverse libraries `readr` and `tibble`. The `here` library is used for convenient pathing, and you'll note that it gives you a message about where it will start pathing.
 
 ```{r load-libraries}
 library(readr)
@@ -141,10 +153,15 @@ here("data", "PVD_2020_Property_Tax_Roll.csv")
 
 That path is nice, but it's just a string. We need to tell R to do something with that string. So we'll use a **pipe** operator (`%>%`) to take that string and feed it to another function. Just so that we aren't printing off the entire table (which is 44,191 rows long), we'll also pipe to the function `head` so that we're only seeing the first few rows.
 
+::: callout-note
+The `knitr::kable` function is just something I'm using to print pretty tables when converting the tutorial code to HTML. You don't need to use it in your own code!
+:::
+
 ```{r print-header}
 here("data", "PVD_2020_Property_Tax_Roll.csv") %>%
   read.csv() %>%
-  head()
+  head() %>%
+  knitr::kable()
 ```
 
 Notably, this hasn't actually saved the dataframe to the R environment. So we need to perform variable assignment.
@@ -167,9 +184,15 @@ base_read %>%
 
 Now let's try out the tidyverse alternative, `readr`. You'll note that the function is named `readr::read_csv()` instead of the default `utils::read.csv()`.
 
-Sidenote 1: If you've already loaded an entire library, you can simply call any function from that library without fanfare. However, there might be a function you want to load from a big library, which you only want to use once. It would be computationally wasteful to load the whole library in (and if there are multiple libraries that have different functions named the same thing, this creates lots of headaches). You can instead access specific functions using the syntax `library_name::function_name`, even without loading the rest of the library. This can also help disambiguate between similarly-named functions (i.e., it's hard to tell `read.csv()` apart from `read_csv()` if you're not looking carefully).
+::: callout-note
+# The `library::function` syntax
+If you've already loaded an entire library, you can simply call any function from that library without fanfare. However, there might be a function you want to load from a big library, which you only want to use once. It would be computationally wasteful to load the whole library in (and if there are multiple libraries that have different functions named the same thing, this creates lots of headaches). You can instead access specific functions using the syntax `library_name::function_name`, even without loading the rest of the library. This can also help disambiguate between similarly-named functions (i.e., it's hard to tell `read.csv()` apart from `read_csv()` if you're not looking carefully).
+:::
 
-Sidenote 2: This is a stylistic difference that distinguishes old-school R users (useRs, if you will) from the newer generation of useRs. Other languages like Python and Matlab reserve `.` to do things like access attributes of a class (Python), or to index data from a structure (Matlab). It's not really important to understand what those things mean, other than to appreciate that `.` has no reserved purpose in R, and therefore can be used in variable/function names. This is why older useRs favored function names like `utils::read.csv()`, which are easier to type (because you don't ever need to press the shift key). However, in modern data science, you can use R and Python side-by-side even in the same workflow, and this can lead to some ambiguity. Therefore, tidyverse functions (and others that are tidyverse-friendly) use underscores instead of dots.
+::: callout-note
+# Dots versus underscores
+This is a stylistic difference that distinguishes old-school R users (useRs, if you will) from the newer generation of useRs. Other languages like Python and Matlab reserve `.` to do things like access attributes of a class (Python), or to index data from a structure (Matlab). It's not really important to understand what those things mean, other than to appreciate that `.` has no reserved purpose in R, and therefore can be used in variable/function names. This is why older useRs favored function names like `utils::read.csv()`, which are easier to type (because you don't ever need to press the shift key). However, in modern data science, you can use R and Python side-by-side even in the same workflow, and this can lead to some ambiguity. Therefore, tidyverse functions (and others that are tidyverse-friendly) use underscores instead of dots.
+:::
 
 ```{r readr-csv}
 # Read in the data using R's default function for reading CSVs
@@ -203,14 +226,16 @@ One last note here, about coding style. Let's say I asked you to read a novel yo
 The following code *works*, but is written in a way that makes it difficult to read.
 
 ```{r messy-code}
-#| eval = FALSE
-here("data","PVD_2020_Property_Tax_Roll.csv") %>% read_csv(col_types=cols(ZIP_POSTAL=col_character()),col_select=c(TAX_MAP,SHORT_DESC,FORMATTED_ADDRESS,ZIP_POSTAL))
+#| eval: false
+
+here("data","PVD_2020_Property_Tax_Roll.csv") %>% read_csv(col_types=cols(ZIP_POSTAL=col_character()),col_select=c(TAX_MAP,SHORT_DESC,FORMATED_ADDRESS,ZIP_POSTAL))
 ```
 
 The same code becomes much more readable when styled.
 
 ```{r styled-code}
-#| eval = FALSE
+#| eval: false
+
 here("data","PVD_2020_Property_Tax_Roll.csv") %>%
   read_csv(
     # Make sure ZIP code isn't accidentally read as numeric
@@ -235,12 +260,26 @@ Here are some general tips for you to consider:
 
 A general note: these are hard exercises, and you won't necessarily find the answers in this tutorial. Learning to Google (or, if you really care about privacy, [DuckDuckGo](https://duckduckgo.com/)) answers to your coding questions is itself an essential skill. So, be patient with yourself. Struggling through these exercises will help you understand this material at a deeper level.
 
-Exercise 1: Verify that `tidy_read_mod` correctly read the columns `plat` and `ZIP_POSTAL` as strings.
+## Exercise 1
 
-Exercise 2: The Johns Hopkins covid-19 tracker maintains the latest count of confirmed coronavirus cases in the U.S. at the following URL:
+Verify that `tidy_read_mod` correctly read the columns `plat` and `ZIP_POSTAL` as strings.
 
-`https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv`.
+## Exercise 2
+
+The Johns Hopkins covid-19 tracker maintains the latest count of confirmed coronavirus cases in the U.S. at the following URL:
+
+`https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv`
 
 *Without downloading the file to your hard drive*, read it into R, and assign it to a variable named `covid_usa`.
 
-Exercise 3: In the `data` folder, there is a dataset listing all of the [bank locations in Louisville, KY](https://catalog.data.gov/dataset/bank-branches-data/resource/769ef747-f5b8-4154-846e-2f347d45a7ce). The file name is `BankBranchesData.txt`. Read this dataset into R and assign it to a variable named `bank_branches`.
+Then, save `covid_usa` as a CSV in the `output` folder.
+
+## Exercise 3
+
+In the `data` folder, there is a dataset listing all of the [bank locations in Louisville, KY](https://catalog.data.gov/dataset/bank-branches-data/resource/769ef747-f5b8-4154-846e-2f347d45a7ce). The file name is `BankBranchesData.txt`. Read this dataset into R and assign it to a variable named `bank_branches`.
+
+You may be tempted to manually the file's extension from `.txt` to something else. Resist that temptation. We always want to avoid making any manual changes to raw data; any such changes should be implemented using code, in a manner that preserves the raw data as-is.
+
+## Reminder
+
+Practice using version control! Once you're at a good stopping point, **commit** your changes and then **push** those commits to GitHub.

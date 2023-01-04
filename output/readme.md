@@ -1,0 +1,1 @@
+This folder is deliberately left empty. When you practice saving outputs (plots, datasets) to disk, you can save them here.

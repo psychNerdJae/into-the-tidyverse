@@ -1,42 +1,62 @@
 ---
-title: "Session 5: Plotting data II"
+title: "Into the tidyverse, Session 7"
+subtitle: "Plotting data II"
 author: "Jae-Young Son"
-output:
-  html_document:
-    code_folding: show
-    toc: TRUE
-    toc_float: TRUE
+date: "2021-01-31"
+date-modified: "2022-12-01"
+theme:
+  light: flatly
+  dark: darkly
+format:
+  html:
+    toc: true
+    toc-location: left
+    code-fold: show
+    code-line-numbers: true
+    embed-resources: true
 ---
-
-This document was most recently knit on `r Sys.Date()`.
 
 # Introduction
 
-In the last tutorial, we covered many of the fundamental ideas underlying the **grammar of graphics**: 1) aesthetics and how to map your data to aesthetics, 2) geometries and how to layer them, and 3) how geometries inherit aesthetics from the initial ggplot call. When you develop a good grasp on these fundamental ideas, you have enough knowledge to figure out how to make nearly any visualization you want (especially now that you know what keywords to search for). In today's tutorial, we'll learn how to give your plots a little more polish. The goal is to make publication-ready plots, which (in theory) won't require further editing in external software like Illustrator or Inkscape.
+In the last tutorial, we covered many of the fundamental ideas underlying the **grammar of graphics**:
+
+1.  Aesthetics and how to map your data to aesthetics
+2.  Geometries and how to layer them
+3.  How geometries inherit aesthetics from the initial ggplot call.
+
+When you develop a good grasp on these fundamental ideas, you have enough knowledge to figure out how to make most visualizations you might want (especially now that you know what keywords to search for). In today's tutorial, we'll learn how to give your plots a little more polish. The goal is to make publication-ready plots, which (in theory) won't require further editing in external software like Illustrator or Inkscape.
 
 As you work through this tutorial's material, you may find yourself having to review those fundamental ideas from last time. That's normal, and perfectly fine. You shouldn't expect to become an expert after working through a single tutorial. I'll try to provide some hints and reminders in today's tutorial, which will hopefully let you review and scaffold from your existing knowledge.
 
 Let's go ahead and load some of the same data we were working with last time.
 
-```{r message=FALSE}
+```{r load-everything}
+#| message: false
+
 library(tidyverse)
 library(lubridate)
 library(janitor)
 library(here)
 
-covid <- here("Data", "time_series_covid19_confirmed_US.csv") %>%
+covid <- here("data", "time_series_covid19_confirmed_US.csv") %>%
   read_csv() %>%
   clean_names() %>%
   select(-c(uid:fips, country_region:combined_key)) %>%
   rename(county = admin2, state = province_state) %>%
-  pivot_longer(cols = -c(county, state), names_to = "date", values_to = "cases") %>%
-  mutate(date = str_remove(date, "x"),
-         date = mdy(date)) %>%
+  pivot_longer(
+    cols = -c(county, state),
+    names_to = "date",
+    values_to = "cases"
+  ) %>%
+  mutate(
+    date = str_remove(date, "x"),
+    date = mdy(date)
+  ) %>%
   group_by(state, date) %>%
   summarise(cases = sum(cases)) %>%
   ungroup()
 
-elections <- here("Data", "countypres_2000-2016.csv") %>%
+elections <- here("data", "countypres_2000-2016.csv") %>%
   read_csv() %>%
   filter(year == 2016) %>%
   filter(party %in% c("democrat", "republican")) %>%
@@ -48,35 +68,42 @@ elections <- here("Data", "countypres_2000-2016.csv") %>%
   ungroup() %>%
   select(state, lean_democrat)
 
-regions <- here("Data", "state_region_division.csv") %>%
+regions <- here("data", "state_region_division.csv") %>%
   read_csv()
+
+covid_elections <- inner_join(covid, elections, by = "state")
+covid_regions <- inner_join(covid, regions, by = "state")
 ```
 
 # Axis labels
 
 You may have noticed that when you don't supply ggplot with axis labels, it defaults to using your data's variable names:
 
-```{r}
+```{r no-axis-labels}
 covid %>%
   ggplot(mapping = aes(x=date, y=cases))
 ```
 
 In this case, it doesn't look terrible, though we probably would prefer the axis labels to be capitalized. However, we'll often be working with variable names that look like `count_normalized_by_pop`. That's considerably less pretty, and I doubt you'd want to publish a figure with that exact axis label. Here's the simplest way to change the axis labels. As a bonus, I've also shown how to add a title and subtitle to your plot.
 
-```{r}
+```{r yes-axis-labels}
 covid %>%
   ggplot(mapping = aes(x=date, y=cases)) +
   xlab("Time") +
   ylab("Raw case numbers") +
-  ggtitle(label = "covid-19 cases over time",
-          subtitle = "(not normalized by state population)")
+  ggtitle(
+    label = "covid-19 cases over time",
+    subtitle = "(not normalized by state population)"
+  )
 ```
 
 # Facets
 
 Last time, we explored how to color-code our plots by **mapping** our data to the **aesthetics** `color` and `fill`. That worked okay when we were only comparing a few states to each other, but it was near-impossible to tell colors apart when we were plotting all 50 states (plus DC, territories, and protectorates). This is an example of **overplotting**, i.e. packing so much information into a single plot that it becomes hard to read. Which defeats the whole purpose of graphing out data! To illustrate, let's create a visualization that is clearly overplotted. Try picking out Tennessee from Texas...
 
-```{r fig.height=8}
+```{r no-facets}
+#| fig.height: 8
+
 covid %>%
   ggplot(mapping = aes(x=date, y=cases, color=state)) +
   geom_line() +
@@ -85,9 +112,11 @@ covid %>%
 
 Since states are discrete categories, it could potentially be useful to separate each state's data out into its own panel. That can be accomplished using a **facet**. In this example, we'll use the function `facet_wrap`. You can see that we specify one argument, `~state`.
 
-The squiggly symbol `~` is called a **tilde**, and can be found (on a US English keyboard at least) above the tab key and to the left of the number 1. When we start learning about statistics, we'll see the tilde very frequently. For example, we might be interested in using a penguin's flipper length to predict its body mass. We would write that **formula** as `body_mass ~ flipper_length`. Colloquially, we might say that we're interested in predicting the penguin's body mass ***by*** its flipper length. The same interpretation holds for our use of `facet_wrap`: we are faceting the data ***by*** state.
+The squiggly symbol `~` is called a **tilde**, and can be found (on a standard US English keyboard at least) above the tab key and to the left of the number 1. When we start learning about statistics, we'll see the tilde very frequently. For example, we might be interested in using a penguin's flipper length to predict its body mass. We would write that **formula** as `body_mass ~ flipper_length`. Colloquially, we might say that we're interested in predicting the penguin's body mass ***by*** its flipper length. The same interpretation holds for our use of `facet_wrap`: we are faceting the data ***by*** state.
 
-```{r fig.height=8}
+```{r facet-wrap}
+#| fig.height: 8
+
 covid %>%
   ggplot(mapping = aes(x=date, y=cases)) +
   geom_line() +
@@ -99,10 +128,18 @@ By looking at the documentation (`?facet_wrap`), you could see how to specify th
 
 What if we have *two* discrete variables we want to facet by? For example, we could be interested in examining covid counts ***by*** geographical region and political ideology (for illustration, we'll convert the continuous variable `lean_democrat` into a discrete variable). Well, we can take that verbal statement and translate it into a formula, and ggplot will happily accept it.
 
-As you're typing out this code, make sure you can answer the following questions: 1) Why have we added the `group` aesthetic in the initial ggplot call, and what happens if we take it out? 2) Recall that the variable `lean_democrat` is a ratio. Why have we defined the new variable `ideology` in this way? 3) In the previous plot, we faceted by state. So why haven't we specified the formula to be `~state + ideology` in this plot? 4) In our call to `facet_wrap`, why have we specified `ncol = 2`? Why not a different number? 5) What would happen if we made the formula `~ideology + region` instead, and might this change motivate us to specify a different `ncol`?
+As you're typing out this code, make sure you can answer the following questions:
 
-```{r message=FALSE}
-covid %>%
+1.  Why have we added the `group` aesthetic in the initial ggplot call, and what happens if we take it out?
+2.  Recall that the variable `lean_democrat` is a ratio. Why have we defined the new variable `ideology` in this way?
+3.  In the previous plot, we faceted by state. So why haven't we specified the formula to be `~state + ideology` in this plot?
+4.  In our call to `facet_wrap`, why have we specified `ncol = 2`? Why not a different number?
+5.  What would happen if we made the formula `~ideology + region` instead, and might this change motivate us to specify a different `ncol`?
+
+```{r facet-wrap-2}
+#| message: false
+
+covid_elections %>%
   inner_join(elections) %>%
   mutate(ideology = if_else(
     lean_democrat > 1,
@@ -116,22 +153,33 @@ covid %>%
 
 It would be totally fair if you looked at this plot and declared it ugly. When you ask `facet_wrap` to give you multiple facets, it stacks the labels on top of each other. This takes up a lot of space, and doesn't necessarily give you the prettiest output. As an alternative, you could use `facet_grid`:
 
-```{r message=FALSE}
+```{r facet-grid}
+#| message: false
+
 covid %>%
   inner_join(elections) %>%
-  mutate(ideology = if_else(
-    lean_democrat > 1,
-    "Democrat-leaning",
-    "Republican-leaning")) %>%
+  mutate(
+    ideology = if_else(
+      lean_democrat > 1,
+      "Democrat-leaning",
+      "Republican-leaning"
+    )
+  ) %>%
   inner_join(regions) %>%
   ggplot(mapping = aes(x=date, y=cases, group=state)) +
   geom_line() +
   facet_grid(rows = vars(region), cols = vars(ideology))
 ```
 
+::: callout-note
 In other people's older code, you might see the syntax `row_variable ~ column_variable` instead. This style is being phased out for three reasons. First, it was hard for people to remember whether **LHS** (left-hand side) corresponded to rows or columns. Second, if you were plotting only a single facet, your code would look like chickenscratch: `. ~ column_variable`. Third, when we were supplying a formula to `facet_wrap`, we understood that `~state` implicitly meant `covid counts ~ state` (or in plain English, covid counts ***by*** state). So in the past, `facet_grid` forced us to specify something that looked like a formula, but was totally inconsistent with our understanding of how formulas work.
 
-```{r message=FALSE}
+If you're curious, this is what it looked like; depending on how far into the future you're doing this tutorial, you may or may not be able to get this code to run.
+
+```{r facet-grid-old-style}
+#| message: false
+#| error: true
+
 covid %>%
   inner_join(elections) %>%
   mutate(ideology = if_else(
@@ -143,12 +191,18 @@ covid %>%
   geom_line() +
   facet_grid(region ~ ideology)
 ```
+:::
 
 # Scales and legends
 
-We haven't really emphasized this point so far, but every aesthetic has a **scale** associated with it. Let's consider the simplest case of the x and y-axis aesthetics. We're working with a continuous x-axis (time) and a continuous y-axis (case counts). There are two key assumptions we've made when plotting these: 1) that we *do* actually want those scales to be continuous, and 2) that we want the axes to be plotted on a *linear* scale. In the code below, we make this unstated assumption explicit by asking ggplot to use a continuous y-axis scale. While we're at it, we'll also modify the axis title. Recall that we could also do this using `ylab`.
+We haven't really emphasized this point so far, but every aesthetic has a **scale** associated with it. Let's consider the simplest case of the x and y-axis aesthetics. We're working with a continuous x-axis (time) and a continuous y-axis (case counts). There are two key assumptions we've made when plotting these:
 
-```{r}
+1.  That we *do* actually want those scales to be continuous
+2.  That we want the axes to be plotted on a *linear* scale.
+
+In the code below, we make this unstated assumption explicit by asking ggplot to use a continuous y-axis scale. While we're at it, we'll also modify the axis title. Recall that we could also do this using `ylab`.
+
+```{r continuous-scale}
 covid %>%
   ggplot(aes(x=date, y=cases, group=state)) +
   geom_line() +
@@ -157,7 +211,7 @@ covid %>%
 
 But if we wanted to, we could specify that an aesthetic be represented by a completely different kind of scale. For example, when working with continuous data that has a very large range, it can make sense to plot a **logarithmic** scale instead of a **linear** one.
 
-```{r}
+```{r log-scale}
 covid %>%
   ggplot(aes(x=date, y=cases, group=state)) +
   geom_line() +
@@ -166,8 +220,7 @@ covid %>%
 
 Depending on our visualization needs, we could use a variety of scales. Another common scale transformation is to a square-root scale. If (for some reason) we wanted to sort continuous values into bins, we could do that too. Though there's virtually no reason why we would want to visualize these particular data in this way, we could even flip the y-axis scale so that the data are plotted upside down.
 
-```{r}
-
+```{r scale-gallery}
 covid %>%
   ggplot(aes(x=date, y=cases, group=state)) +
   geom_line() +
@@ -188,9 +241,8 @@ covid %>%
 
 This basic logic extends very naturally to other aesthetics. For example, let's examine color-coding. We could color-code the lines according to geographic region. By default, ggplot knows that region is a **discrete** (i.e., categorical) variable, so it uses a discrete color scale. We can make this assumption explicit by writing the following. Note again that we can change the name of the legend from the variable name `region` by specifying a name of our choosing.
 
-```{r message=FALSE}
-covid %>%
-  inner_join(regions) %>%
+```{r discrete-scale-default}
+covid_regions %>%
   ggplot(mapping = aes(x=date, y=cases, color=region, group=state)) +
   geom_line() +
   scale_color_discrete(name = "Census-designated region:")
@@ -198,46 +250,50 @@ covid %>%
 
 If you look at this plot and find it ugly, you are in good company. I've convinced that ggplot's default color palette is deliberately designed to revolt people into specifying their own (better) color scales. More importantly, we should also note that the default palette is not a color palette that is accessible to people with certain forms of color-blindness. Less importantly, if we printed off the plot on a black-and-white printer, we wouldn't be able to tell the colors apart anymore.
 
-So perhaps we'd like to use an alternative color scale that's prettier and more accessible. One built-in option is `viridis`, which is engineered to be perceptually uniform, accessible to viewers with the most common form of color blindness, and convertible to black-and-white. The `d` at the end of `scale_color_viridis_d` refers to the fact that our color aesthetic is being mapped to **discrete** data. There are a couple of viridis palettes: viridis, magma, inferno, plasma, and cividis. You can see that I prefer plasma, and that I even specify a custom subset of the full scale to use (to see why, try removing those arguments). You will develop your own preferences with experience.
+So perhaps we'd like to use an alternative color scale that's prettier and more accessible. One built-in option is `viridis`, which is engineered to be perceptually uniform, accessible to viewers with the most common form of color blindness, and convertible to black-and-white. The `d` at the end of `scale_color_viridis_d` refers to the fact that our color aesthetic is being mapped to **discrete** data. There are a couple of viridis palettes: `viridis`, `magma`, `inferno`, `plasma`, and `cividis`. You can see that I prefer plasma, and that I even specify a custom subset of the full scale to use (to see why, try removing those arguments). You will develop your own preferences with experience.
 
-```{r message=FALSE}
-covid %>%
-  inner_join(regions) %>%
+```{r discrete-scale-plasma}
+covid_regions %>%
   ggplot(mapping = aes(x=date, y=cases, color=region, group=state)) +
   geom_line() +
-  scale_color_viridis_d(name = "Census-designated region:",
-                        begin = 0.1, end = 0.8, option = "plasma")
+  scale_color_viridis_d(
+    name = "Census-designated region:",
+    begin = 0.1, end = 0.8, option = "plasma"
+  )
 ```
 
 Another built-in option is `color_brewer`. The best way to understand the brewer is to [play with it online](https://colorbrewer2.org/). Once you've played around with it, the arguments are pretty straightforward to understand:
 
-```{r message=FALSE}
-covid %>%
-  inner_join(regions) %>%
+```{r discrete-scale-brewer}
+covid_regions %>%
   ggplot(mapping = aes(x=date, y=cases, color=region, group=state)) +
   geom_line() +
-  scale_color_brewer(name = "Census-designated region:",
-                     palette = "GnBu")
+  scale_color_brewer(
+    name = "Census-designated region:",
+    palette = "GnBu"
+  )
 ```
 
-Even though the Brewer is convenient, I don't find myself using it very much. In the plot above, you can hardly see the lines for the Midwest. In practice, I go to the Color Brewer website, pick out colors that I actually like, then feed those **values** to `scale_color_manual`. You might say that the end result below looks bad. Truth be told, I'm actually not the biggest fan of the colors I picked out below. For starters, it's not a colorblind-friendly palette. But at the least, I know it's bad because I have poor artistic taste, not because the function automatically picked out "bad" colors on my behalf.
+Even though the Brewer is convenient, I don't find myself using it very much. In the plot above, you can hardly see the lines for the Midwest.
 
-```{r message=FALSE}
-covid %>%
-  inner_join(regions) %>%
+In practice, I go to the Color Brewer website, pick out colors that I actually like, then feed those **values** to `scale_color_manual`. You might say that the end result below looks bad. Truth be told, I'm actually not the biggest fan of the colors I picked out below. For starters, it's not a colorblind-friendly palette. But at the least, I know it's bad because I have poor artistic taste, not because the function automatically picked out "bad" colors on my behalf.
+
+```{r discrete-scale-manual}
+covid_regions %>%
   ggplot(mapping = aes(x=date, y=cases, color=region, group=state)) +
   geom_line() +
-  scale_color_manual(name = "Census-designated region:",
-                     values = c("#3182bd", "#de2d26", "#31a354", "#756bb1"))
+  scale_color_manual(
+    name = "Census-designated region:",
+    values = c("#3182bd", "#de2d26", "#31a354", "#756bb1")
+  )
 ```
 
 ## Continuous color scales
 
 So far, we've only worked with discrete color scales. But, the exact same kind of logic works with continuous color scales. For example, let's color-code the lines according to how strongly a state leaned Democrat in the 2016 Presidential election. Note that DC is removed because it overwhelmingly preferred Clinton, such that including it made the rest of the plot unreadable.
 
-```{r message=FALSE}
-covid %>%
-  inner_join(elections) %>%
+```{r continuous-scale-default}
+covid_elections %>%
   filter(state != "District of Columbia") %>%
   ggplot(mapping = aes(x=date, y=cases, color=lean_democrat, group=state)) +
   geom_line() +
@@ -246,9 +302,9 @@ covid %>%
 
 It's often very hard to read continuous color scales. Remember how we'd previously used a y-axis that used a binned scale? That might not be very useful for case counts, but it is often useful for making our color scale more readable.
 
-```{r message=FALSE}
-covid %>%
-  inner_join(elections) %>%
+```{r continuous-scale-binned}
+
+covid_elections %>%
   filter(state != "District of Columbia") %>%
   ggplot(mapping = aes(x=date, y=cases, color=lean_democrat, group=state)) +
   geom_line() +
@@ -259,7 +315,7 @@ You can modify the palette of continuous color scales in (more-or-less) exactly 
 
 ## Other aesthetics
 
-I won't spend much time on this section. I only want to note that there are similar scales for other aesthetics, and reiterate that every aesthetic is represented by a scale even when it's not explicitly specified. ggplot is usually pretty good about picking default scales, but just remember that you can take complete control at any time, for any aesthetic.
+I won't spend much time on this section. I only want to note that there are similar scales for other aesthetics, and reiterate that every aesthetic is represented by a scale even when it's not explicitly specified. `ggplot` is usually pretty good about picking default scales, but just remember that you can take complete control at any time, for any aesthetic.
 
 # Coordinates
 
@@ -277,13 +333,14 @@ Most of the time, when we need to modify the x/y-axis scales, it's easiest to do
 
 In our plots so far, we've been displaying all available case data, starting from January 22. But we know in hindsight that the first major wave didn't occur until mid-March. We might therefore want to "zoom" into our data, plotting the case numbers starting in March instead of January. To do this, we can use the default coordinate system, `coord_cartesian`, and additionally feed that function an extra argument to **limit** what range of data is plotted. You may now be able to guess what the argument `xlim` does, and if not, consult the documentation (`?coord_cartesian`). Now, try seeing whether you can also zoom in on the y-axis.
 
-```{r message=FALSE}
-covid %>%
-  inner_join(regions) %>%
+```{r coord-cartesian}
+covid_regions %>%
   ggplot(mapping = aes(x=date, y=cases, color=region, group=state)) +
   geom_line() +
-  scale_color_viridis_d(name = "Census-designated region:",
-                        begin = 0.1, end = 0.8, option = "plasma") +
+  scale_color_viridis_d(
+    name = "Census-designated region:",
+    begin = 0.1, end = 0.8, option = "plasma"
+  ) +
   coord_cartesian(xlim = c(mdy("03/01/2020"), mdy("09/24/2020")))
 ```
 
@@ -293,23 +350,28 @@ In your **Plots** tab in RStudio, you've probably noticed that there's a button 
 
 To illustrate, let's compare the following two plots. Try opening up a new plot window and resizing the plot to ensure that it maintains a constant shape, even as you change its size.
 
-```{r message=FALSE}
-covid %>%
-  inner_join(regions) %>%
-  ggplot(mapping = aes(x=date, y=cases, color=region, group=state)) +
-  geom_line() +
-  scale_color_viridis_d(name = "Census-designated region:",
-                        begin = 0.1, end = 0.8, option = "plasma") +
-  coord_fixed(ratio = 1/1000)
-```
+```{r aspect-ratio-examples}
+#| message=FALSE
 
-```{r message=FALSE}
 covid %>%
   inner_join(regions) %>%
   ggplot(mapping = aes(x=date, y=cases, color=region, group=state)) +
   geom_line() +
-  scale_color_viridis_d(name = "Census-designated region:",
-                        begin = 0.1, end = 0.8, option = "plasma") +
+  scale_color_viridis_d(
+    name = "Census-designated region:",
+    begin = 0.1, end = 0.8, option = "plasma"
+  ) +
+  coord_fixed(ratio = 1/1000)
+
+covid %>%
+  inner_join(regions) %>%
+  ggplot(mapping = aes(x=date, y=cases, color=region, group=state)) +
+  geom_line() +
+  scale_color_viridis_d(
+    name = "Census-designated region:",
+    begin = 0.1, end = 0.8, option = "plasma"
+  ) +
+  # Bump this ratio up
   coord_fixed(ratio = 1/10000)
 ```
 
@@ -319,7 +381,7 @@ Bonus: using a ratio of `1/10000`, zoom in so that we begin plotting data from M
 
 By default, ggplot will return a stacked bar when you ask it for a barplot, which makes it easy to compare the proportions of whatever's being plotted. For example, we could look at the (raw!) counts in three states, and immediately get a sense for the relative share of cases in those states. Of course, as we've previously discussed, there are issues with plotting raw case numbers (e.g., because California obviously has a bigger population than Rhode Island), but this is just for the sake of illustration.
 
-```{r}
+```{r geom-bar-default}
 covid %>%
   filter(date == mdy("09/24/2020")) %>%
   filter(state %in% c("Tennessee", "California", "Rhode Island")) %>%
@@ -331,7 +393,7 @@ Another popular way to visualize proportions is using a **pie chart**. Some peop
 
 If you ever do find yourself needing to make a pie chart, you can easily use the polar coordinate system to transform the Cartesian system into the polar system:
 
-```{r}
+```{r geom-bar-polar}
 covid %>%
   filter(date == mdy("09/24/2020")) %>%
   filter(state %in% c("Tennessee", "California", "Rhode Island")) %>%
@@ -346,88 +408,48 @@ covid %>%
 
 By default, ggplot uses a **theme** that has a grey background and white grid lines. Some people really like this. Personally, I don't. I like plots that look very clean, and I don't think the grey background (for example) is particularly clean-looking. Luckily for people like me, ggplot comes with a bunch of pre-made themes that suit a variety of preferences.
 
-Let's store a dataframe in our computer's memory that has the `regions` dataset joined to the `covid` dataset. Typically, we do this at runtime via `covid %>% inner_join(regions)`, but we'll be using this dataframe a lot. Let's save ourselves some typing and lessen our computers' computing loads.
-
-```{r}
-covid_regions <- covid %>%
-  inner_join(regions)
-```
-
 As usual, here's the default theme (though we don't typically call `theme_grey` explicitly).
 
-```{r}
-covid_regions %>%
+```{r theme-grey}
+basic_plot <- covid_regions %>%
   ggplot(mapping = aes(x=date, y=cases, group=state)) +
   geom_line() +
-  facet_grid(cols = vars(region)) +
-  theme_grey()
+  facet_grid(cols = vars(region))
+
+basic_plot + theme_grey()
 ```
 
 Now, let's just try running through other themes. Notice that each theme changes the background color, the color/existence of grid lines, and whether borders are drawn around facets.
 
-```{r}
-covid_regions %>%
-  ggplot(mapping = aes(x=date, y=cases, group=state)) +
-  geom_line() +
-  facet_grid(cols = vars(region)) +
-  theme_bw()
-```
+```{r theme-gallery}
+basic_plot + theme_bw()
 
-```{r}
 covid_regions %>%
   ggplot(mapping = aes(x=date, y=cases, group=state)) +
   geom_line(color = "white") +
   facet_grid(cols = vars(region)) +
   theme_dark()
-```
 
-```{r}
-covid_regions %>%
-  ggplot(mapping = aes(x=date, y=cases, group=state)) +
-  geom_line() +
-  facet_grid(cols = vars(region)) +
-  theme_light()
-```
+basic_plot + theme_light()
 
-```{r}
-covid_regions %>%
-  ggplot(mapping = aes(x=date, y=cases, group=state)) +
-  geom_line() +
-  facet_grid(cols = vars(region)) +
-  theme_classic()
-```
+basic_plot + theme_classic()
 
-```{r}
-covid_regions %>%
-  ggplot(mapping = aes(x=date, y=cases, group=state)) +
-  geom_line() +
-  facet_grid(cols = vars(region)) +
-  theme_linedraw()
-```
+basic_plot + theme_linedraw()
 
-```{r}
-covid_regions %>%
-  ggplot(mapping = aes(x=date, y=cases, group=state)) +
-  geom_line() +
-  facet_grid(cols = vars(region)) +
-  theme_minimal()
-```
+basic_plot + theme_minimal()
 
-```{r}
-covid_regions %>%
-  ggplot(mapping = aes(x=date, y=cases, group=state)) +
-  geom_line() +
-  facet_grid(cols = vars(region)) +
-  theme_void()
+basic_plot + theme_void()
 ```
 
 ## Manual adjustments
 
-Personally, I really like `theme_bw` and I use it in nearly all of my own plots. But, there are often times when I want/need to make manual adjustments to that pre-made template. For example, I often want to get rid of the grid lines. Sometimes, I want legends to be drawn below the plot, not beside it. I don't really like that the default location of the plot title is left-justified, not centered. As with all other parts of ggplot, we can easily take full manual control over any thematic element. The full list of possible thematic adjustments is outside the scope of this tutorial, but can be viewed in the [ggplot reference manual](https://ggplot2.tidyverse.org/reference/theme.html).
+Personally, I really like `theme_bw` and I use it in nearly all of my own plots. But, there are often times when I want/need to make manual adjustments to that pre-made template.
+
+For example, I often want to get rid of the grid lines. Sometimes, I want legends to be drawn below the plot, not beside it. I don't really like that the default location of the plot title is left-justified, not centered. As with all other parts of ggplot, we can easily take full manual control over any thematic element. The full list of possible thematic adjustments is outside the scope of this tutorial, but can be viewed in the [ggplot reference manual](https://ggplot2.tidyverse.org/reference/theme.html).
 
 For the sake of example, we'll try out the three things I mentioned. For reference, here's the plot we get if we use all of the default thematic settings:
 
-```{r}
+```{r bw-default}
 covid_regions %>%
   ggplot(mapping = aes(x=date, y=cases, color=region, group=state)) +
   ggtitle("covid-19 cases over time") +
@@ -438,7 +460,7 @@ covid_regions %>%
 
 And now, adding our manual adjustments:
 
-```{r}
+```{r bw-manual}
 covid_regions %>%
   ggplot(mapping = aes(x=date, y=cases, color=region, group=state)) +
   ggtitle("covid-19 cases over time") +
@@ -456,9 +478,11 @@ covid_regions %>%
 
 ## Position adjustments
 
-There are times when you might want to adjust where data are plotted. For example, the default barplot stacks groups *on top of* each other. You might instead want groups to be plotted *beside* each other. Once again, we might be interested in comparing case counts in California, Rhode Island, and Tennessee. Stacked barplots are decently good for visualizing proportions, but it's hard to beat side-by-side comparisons. We can do this by specifying an additional argument, `position`, which specifies what position the geom should be drawn in. That argument takes a function that specifies how the position adjustment should be made. Here, we'll use the function `position_dodge`, so named because the bars are trying to "dodge" each other.
+There are times when you might want to adjust where data are plotted. For example, the default barplot stacks groups *on top of* each other. You might instead want groups to be plotted *beside* each other. Once again, we might be interested in comparing case counts in California, Rhode Island, and Tennessee.
 
-```{r}
+We can do this by specifying an additional argument, `position`, which specifies what position the geom should be drawn in. That argument takes a function that specifies how the position adjustment should be made. Here, we'll use the function `position_dodge`, so named because the bars are trying to "dodge" each other.
+
+```{r position-dodge}
 covid %>%
   filter(date == mdy("09/24/2020")) %>%
   filter(state %in% c("Tennessee", "California", "Rhode Island")) %>%
@@ -468,16 +492,16 @@ covid %>%
 
 Position adjustments can also help when plotting overlapping datapoints. To illustrate, we're going to make up a dataset where all of the datapoints are overlapping:
 
-```{r}
+```{r create-overlap}
 overlap <- tibble(
   x = rep(1, times = 20),
   y = rep(1, times = 20)
-  )
+)
 ```
 
 When plotted, the 20 datapoints are visually compressed in a single point. This is bad because the viewer don't know whether that point represents a single observation, or a thousand overlapping observations.
 
-```{r}
+```{r plot-overlap-default}
 overlap %>%
   ggplot(aes(x, y)) +
   geom_point() +
@@ -486,7 +510,7 @@ overlap %>%
 
 But if we make a position adjustment, such that we "jitter" the data, it becomes evident that there are many datapoints there. Note how we specify two arguments for `position_jitter`. What happens if we omit one or both?
 
-```{r}
+```{r plot-overlap-jittered}
 overlap %>%
   ggplot(aes(x, y)) +
   geom_point(position = position_jitter(width = 0.01, height = 0)) +
@@ -495,9 +519,9 @@ overlap %>%
 
 ## Lists + style consistency
 
-When a ggplot object is assigned to a variable, it's saved in memory as a list.
+When a ggplot object is assigned to a variable, it's stored in memory as a list.
 
-```{r}
+```{r store-ggplot}
 my_plot <- covid_regions %>%
   ggplot(mapping = aes(x=date, y=cases, group=state)) +
   ggtitle("covid-19 cases over time") +
@@ -509,7 +533,7 @@ my_plot
 
 This is nice, because it means that we can create a list that can act as our own custom theme when we add it to a new plot:
 
-```{r}
+```{r custom-theme}
 theme_jae <- list(
   # Start off with the black-and-white theme
   theme_bw(),
@@ -528,9 +552,9 @@ covid_regions %>%
   theme_jae
 ```
 
-Or, since we've already saved that plot in memory:
+Or, since we've already stored that plot in memory:
 
-```{r}
+```{r add-custom-theme}
 my_plot +
   theme_jae
 ```
@@ -543,19 +567,26 @@ Many of the most popular image formats are **rasterized**. For example, if you h
 
 I strongly prefer to save my plots as **vectorized** images (if you're familiar with ideas from linear algebra, this should already give you an idea of what this entails). Instead of characterizing the plot within pixel space, the plot is saved as a collection of elements (points, lines, curves, etc) inside vector space. Therefore, by scaling the vectors, you can resize your plot without any loss to image quality. The drawback is that vectorized images can be harder to work with. In my experience, using vectorized PDFs has been a happy medium.
 
-A couple more technical notes for any people interested: DPI stands for "dots per inch" and refers to the resolution of an image if you were to print it. You might remember seeing old-fashioned newspapers where the printed images were clearly composed of many small dots. The more dots per inch, the higher the resolution, leading to better image quality. 300 is considered the minimum for print, and many publishers will insist that you upload 300 DPI images when your article goes to press. A dingbat font is basically one that maps keyboard inputs into icons instead of characters. They were used in the early days of computers when it was easier to render a font instead of displaying an image. I hate them because they make it completely impossible to edit a plot in external software like Adobe Illustrator. Unless you tell ggsave to turn off Dingbat use, I guarantee you that you'll run into problems with "missing fonts", visual elements scaling in an unexpected and unpredictable manner, and so on. Granted, the lion's share of your plot editing should be happening directly in R via ggplot. But, in cases where you need to do a little further editing in external software, you'll be glad that you didn't use Dingbats.
+:::callout-note
+DPI stands for "dots per inch" and refers to the resolution of an image if you were to print it. You might remember seeing old-fashioned newspapers where the printed images were clearly composed of many small dots. The more dots per inch, the higher the resolution, leading to better image quality. 300 is considered the minimum for print, and many publishers will insist that you upload 300 DPI images when your article goes to press.
+:::
 
-```{r}
+:::callout-note
+A dingbat font is basically one that maps keyboard inputs into icons instead of characters. They were used in the early days of computers when it was easier to render a font instead of displaying an image. I hate them because they make it completely impossible to edit a plot in external software like Adobe Illustrator. Unless you tell ggsave to turn off Dingbat use, I guarantee you that you'll run into problems with "missing fonts", visual elements scaling in an unexpected and unpredictable manner, and so on. Granted, the lion's share of your plot editing should be happening directly in R via ggplot. But, in cases where you need to do a little further editing in external software, you'll be glad that you didn't use Dingbats.
+:::
+
+```{r save-to-disk}
+#| eval: false
+
 ggsave(
-  filename = here("Output", "ggsave_example.pdf"),
+  filename = here("output", "ggsave_example.pdf"),
   plot = my_plot + theme_jae,
   width = 8,
   height = 4,
   units = "in",
   dpi = 300,
   useDingbats = FALSE
-  )
-
+)
 ```
 
 ## The cheatsheet
@@ -568,6 +599,18 @@ I'll also note that if you go to the [online ggplot reference manual](https://gg
 
 A general note: these are hard exercises, and you won't necessarily find the answers in this tutorial. Learning to Google (or, if you really care about privacy, [DuckDuckGo](https://duckduckgo.com/)) answers to your coding questions is itself an essential skill. So, be patient with yourself. Struggling through these exercises will help you understand this material at a deeper level.
 
-1. You may remember having previously worked with survey data concerning people's preferences for various Halloween candies. Load in `candyhierarchy2017.csv` from the data folder, tidy it up, and plot the data. Try splitting up the data by variables like gender, whether respondents went trick-or-treating, and whether respondents perceive The Dress as being black/blue or white/gold. You might find faceting useful here. You get bonus points if you're able to make the plot spooky and/or Halloween-themed.
+## Exercise 1
 
-2. The City of New York publishes data on popular baby names, with demographic information about race and gender. Load in `Popular_Baby_Names.csv` from the data folder and try visualizing the data in different ways. For example, you could track the popularity of a particular name over time. You could plot the ranking of popular names in a particular year. You could investigate what names are only popular within a particular demographic group, versus what names are popular across demographic groups.
+You may remember having previously worked with survey data concerning people's preferences for various Halloween candies. Load in `candyhierarchy2017.csv` from the data folder, tidy it up, and plot the data.
+
+Try splitting up the data by variables like gender, whether respondents went trick-or-treating, and whether respondents perceive The Dress as being black/blue or white/gold. You might find faceting useful here. You get bonus points if you're able to make the plot spooky and/or Halloween-themed.
+
+## Exercise 2
+
+The City of New York publishes data on popular baby names, with demographic information about race and gender. Load in `Popular_Baby_Names.csv` from the data folder and try visualizing the data in different ways.
+
+For example, you could track the popularity of a particular name over time. You could plot the ranking of popular names in a particular year. You could investigate what names are only popular within a particular demographic group, versus what names are popular across demographic groups.
+
+## Reminder
+
+Practice using version control! Once you're at a good stopping point, **commit** your changes and then **push** those commits to GitHub.

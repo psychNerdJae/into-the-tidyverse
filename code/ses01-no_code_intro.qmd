@@ -1,0 +1,282 @@
+---
+title: "Into the tidyverse, Session 1"
+subtitle: "No-code introduction to programming"
+author: "Jae-Young Son"
+date: "2020-11-02"
+date-modified: "2022-12-01"
+theme:
+  light: flatly
+  dark: darkly
+format:
+  html:
+    toc: true
+    toc-location: left
+    code-fold: show
+    code-line-numbers: true
+    embed-resources: true
+---
+
+Increasingly, research in the social sciences requires some knowledge of programming and computing. For example, it is becoming increasingly common to program computerized experiments, and to perform statistical analyses using code.
+
+This came as an incredibly rude surprise when I embarked upon my first independent research project as a college senior. Through trial and error (frankly, mostly error), I've gone from flunking two introductory computer science classes to teaching programming. Because of this, I understand the feeling of being code-phobic, and just how much of an overwhelming task it can feel like to learn programming.
+
+So, this is my best attempt at synthesizing some of the key ideas and insights about programming without writing a single line of (real) code. The goal is to familiarize you with some of these ideas in plain English so that when you're learning a particular programming language, the act of writing code is just learning how to express an idea using some fancy computer syntax.
+
+The only prior knowledge I assume is a little bit of high-school level algebra. I'll review the relevant concepts along the way, so if you feel like your math is a little shaky, you'll still be able to follow along.
+
+# Datatypes
+
+There are different types of objects out in the world. For example, there are fruits and there are bowling balls. Obviously, these are different. But if you're not paying attention, you might mistake one type of object for a different type of object. A big watermelon is about the same weight as a bowling ball. An orange is approximately the right shape, and many bowling balls are orange-colored. But of course, you wouldn't want to try biting into a bowling ball, and you probably don't want to fling a watermelon at bowling pins.
+
+The same is true for digital objects that are handled by your computer. It might seem obvious that the number `5` and the text `"five"` are different from each other. But if we aren't paying attention, we might miss the fact that the computer is not processing the number `5`, but the text `"5"`. From the computer's perspective, trying to add `5` and `"5"` makes about as much sense as trying to add `5` and `"Detroit"`.
+
+This is the key idea behind datatypes. There are certain types of data, and what you're allowed to do with those data depends on what their types are.
+
+From high school math classes, you might remember that an **integer** is a number that doesn't contain a fraction or a decimal point. These are all examples of integers: `-99`, `0`, `200`. On a standard number line, integers are the "tick marks."
+
+What about numbers that *do* contain a fraction or decimal point? This datatype is called a **float**. You can think of it as a number that "floats" on a number line between two integers. Sometimes, the computer uses the float datatype to represent a number that looks like an integer. For example, we know that the result of `2.5 + 2.5 = 5`, which looks like an integer to the human mind. But, because the computer started off with a float datatype `2.5`, adding things to the float results in another float.
+
+Why would there be an integer datatype at all, if it seems like a float is capable of representing the same information, and more? This is a great question, and I'll try to answer it without getting into too much technical detail. You might have heard that computers represent information in *binary*. In other words, computers only understand the values `0` and `1`. We can get more complex representations by creating longer sequences of these two values. Integers are actually pretty easy to represent using binary, so computers are able to store information about very small and very large integers with the same amount of precision. On the other hand, floats are much harder to represent precisely using binary. You might be familiar with the idea of rounding error. We know that `1.25 + 1.33 = 2.58` if we don't round. But if we round to the first decimal point, `1.25 + 1.33 = 2.6`. Suddenly, our computation has become much less precise. Representing information in binary means that we lose precision when we're working with complex datatypes like floats. When precision is really important, it might be better to use integers when possible.
+
+Anytime we want to work with text, the computer will represent that using the **string** or **character** datatype. Think about a sentence as being a string of text, and that will help you remember. Strings can get confusing if we're not paying close attention. For example, in a psychology experiment, we might label one of our images something like `"stimulus_5.jpg"`. We later ask the computer to extract out the 10th character, which is `"5"`. Well, to the human mind, that looks like a number. But from the computer's perspective, we started out with a string, meaning that anything we pull out from it is still a string.
+
+Finally, we have the Boolean datatype, which can only take two values: `true` and `false`. If you're not familiar with [Dolly Parton's classic song Jolene](https://www.youtube.com/watch?v=L0eeSoU35wM), consider this a cultural lesson and go listen to it now (I grew up in East Tennnessee, where Dolly Parton's from, and she's considered royalty around those parts). Now that you have this song stuck in your head, remember the Boolean datatype by singing, "Boolean, Boolean, Boolean, Booleeeeeean... Yes/no, are you going to take my man?" Different languages use different syntax to represent the Boolean. Some use `0`=False and `1`=True, and others simply use the words `True` and `False`.
+
+# Operators
+
+I'm going to provide two unsatisfying definitions of operators.
+
+1.  You have two numbers. What do you want to do with those numbers? Whatever you decide to do (add, subtract, see if one is greater than the other, etc), the thing that allows you "to do" is an **operator**. So the operator for "add" is `+`, and you can write the **expression** `A + B` to add A and B. Similarly, the operator for "greater than" is `>`, and you can ask whether A is greater than B by writing `A > B`.
+
+2.  You'll note that when we write an expression, we don't have to use language. We can use fancy symbols like `+` and `>` instead. So, if you see a fancy symbol in someone's code, it's likely an operator.
+
+There are four major kinds of operators: assignment, arithmetic, conditional, and logical.
+
+## Assignment operators
+
+In your high school math classes, you might remember using variables, like `A = 5`. The equal sign `=` is an **assignment** operator because you use it to assign the value `5` to the variable `A`.
+
+## Arithmetic operators
+
+**Arithmetic** operators are pretty easy because they (mostly) look like the symbols we commonly use in math classes. We add using the plus sign `+`, subtract using the minus sign `-`, multiply using the star (also known as an asterisk) `*`, and divide using the slash `/`.
+
+## Conditional operators
+
+**Conditional** operators allow you to check whether something is true or false (pop quiz: what datatype is produced when you use a conditional operator?). For example, we might want to ask, "Is A greater than B?" We could write the expression `A > B`, which is either true or false.
+
+Conditional operators are a little trickier because they're written more abstractly. For example, how would you test whether A is equal to B? Remember, we've already used the equal sign `=` as an assignment operator. So to get around this, we use the double-equal operator `==` to mean "is equal to". Similarly, it's pretty hard to type the mathematical symbol "is not equal to" `≠`, so we've got to find an alternative. The exact syntax is different depending on the language, but it's common to see `!=` where the `!` operator means "not". The operators "greater than" `>` and "less than" `<` are pretty easy because we use these symbols in math too. But how would we write something like "greater than or equal to" given that `≤` is also hard to type? See if you can make a guess, based on the operator used for "not equal to". If you guessed `>=` and `<=`, then you're exactly right.
+
+Why are they called conditional operators? Maybe when you were a kid, you'd ask your parents if you could go over to your friend's house. They might have told you, "Sure, on one condition..." And then you'd groan because you knew that your ability to go to your friend's house was conditional on you cleaning your room.
+
+## Logical operators
+
+Sometimes, you want to check whether multiple conditions are true. Maybe your parent told you, "Sure, you can go to your friend's house IF you clean your room AND do your homework first." To do this, you would use **logical** operators. We've actually already seen one at work, because NOT is also logic. (For example: "Can you go to your friends house? Not if your room is dirty.")
+
+Below, you can find the major logical operators and examples of how they are expressed in R:
+
+-   IF (this one is special because it's written in plain English)
+
+-   AND is written as `&` ("ampersand")
+
+-   OR is written as `|` (surprisingly, there doesn't seem to be a more elegant name for this other than "vertical-bar")
+
+-   NOT is written as `!` ("exclamation mark")
+
+For the most part, these operators are referred to by the logical operations they perform. So, it'd be weird to say "A ampersand B", and more normal to say "A AND B".
+
+# Control logic
+
+Together, conditional and logical operators can be used to do really powerful things. For example, it lets you decide whether you want to eat a sandwich.
+
+Well, do you? How do you know?
+
+When we make decisions in our everyday life, we want to control our actions, depending on what we know to be logically true about the world. Hence, **control logic**.
+
+Most likely, you only want to eat a sandwich IF you're hungry. But there are also other things that are true about the world, like the fact that you don't have any bread in your kitchen. So maybe you'll only eat a sandwich IF you're hungry AND you have all the ingredients.
+
+This is control logic at work! Note that in order to execute the action "eat a sandwich", you have to check whether two things are true: 1) Are you hungry? 2) Do you have all the ingredients needed to make a sandwich? If only one of these things is true, then you won't eat a sandwich.
+
+If we were asking a computer to make a decision for us, how would it decide? We won't write any real code (I did promise you that we wouldn't), but we can write fake code (known as pseudocode) which would get the job done:
+
+    if hungry==True & have_ingredients==True:
+        eat_sandwich
+
+Sometimes, when I feel stressed out, I'll eat something even if I'm not hungry. How would we express this in pseudocode?
+
+    if (hungry==True | stressed==True) & have_ingredients==True:
+      eat_sandwich
+
+The parentheses are used the same way they're used in algebra. Expressions that are inside the same set of parentheses get evaluated together. What would happen if we grouped the operators differently?
+
+    if hungry==True | (stressed==True & have_ingredients==True):
+      eat_sandwich
+
+***Hint:*** What would this control logic have you do if you were hungry, but had no sandwich ingredients? Is that sensible?
+
+# Iteration
+
+Let's say we work for a car manufacturing company, and we're trying to program a robot arm to tighten the screws that keep the wheels attached to the car (technically, these are lug nuts, but let's just say screws). How would we do that?
+
+We could write pseudocode that looks like this:
+
+    grab_screw
+    turn_screw
+    turn_screw
+    turn_screw
+    turn_screw
+    ... (copy/paste many more times)
+
+We can see that to tighten a single screw, we'd need a thousand lines of code. Surely, there is a better method! This is the problem of **iteration**, which is a fancy word for "do something over and over again." So, how can we efficiently iterate through all of the screw turns?
+
+## for loops
+
+Let's imagine that we know ahead of time exactly how many times a screw needs to be turned before we stop. In this case, we could write:
+
+    grab_screw
+    for 1 through 1000:
+      turn_screw
+
+This is known as a **for loop**, because we're asking the computer to iterate through loops *for* a pre-determined amount of time.
+
+## while loops
+
+But oftentimes, we can't predict the future, so we don't know how many loops we need to iterate through. In this case, we could do something like this:
+
+    grab_screw
+    screw_is_loose = True
+    while screw_is_loose == True:
+      turn_screw
+
+Once the screw is no longer loose, the loop will stop, and the robot will stop turning the screw. This is known as a **while loop**, because we're asking the computer to iterate through loops *while* a condition is met.
+
+# Functions
+
+Maybe in algebra class, you remember learning about functions. They take the form $f(x) = x + 7$, which is about the most boring thing we could use a function to do. If you're asked to solve $f(5)$, you assign $x = 5$, then solve $5 + 7 = 12$.
+
+The name of the function, in this case, is $f$. The parentheses surround the variable $x$, which is the *argument* of the function (also known as a parameter, or an input). When you call the function, you supply an argument, and in doing so, you assign a value to $x$.
+
+## Using functions
+
+Let's use functions to do more interesting things. We can illustrate using Ke\$ha's 2009 hit song "TiK ToK" (which perhaps is a dated cultural reference that reveals how old I am...).
+
+> Wake up in the morning feelin' like P. Diddy\
+> Grab my glasses, I'm out the door, I'm gonna hit this city\
+> Before I leave, brush my teeth with a bottle of Jack\
+> 'Cause when I leave for the night, I ain't coming back
+
+How might we write this in pseudocode?
+
+    wake_up(morning)
+    feel_like(p_diddy)
+    grab(glasses)
+    brush_teeth(jack_daniels)
+    leave = walk_out(door)
+    if leave == True:
+      navigate_to(location = city, come_back = False)
+
+Note that in the last line, we've specified two arguments to the function `navigate_to`, and we've also provided *named* arguments. We don't necessarily have to do that, as you can see here:
+
+    wake_up(morning)
+    feel_like(p_diddy)
+    grab(glasses)
+    brush_teeth(jack_daniels)
+    leave = walk_out(door)
+    if leave == True:
+      navigate_to(city, False)
+
+We could also name *every* argument. The name of each argument is specified by whoever makes the function, and a good function-writer will use informative names for each argument. Here's an example:
+
+    wake_up(when = morning)
+    feel_like(emotion = p_diddy)
+    grab(object = glasses)
+    brush_teeth(toothbrushing_substance = jack_daniels)
+    leave = walk_out(portal = door)
+    if leave == True:
+      navigate_to(location = city, come_back = False)
+
+## Functions are flexible
+
+By supplying different arguments to the same functions, we could make this song about me instead. This is really nice, because it gives you a lot of flexibility. Just by changing the arguments, we've gone from a party animal to a grad student.
+
+    wake_up(late_afternoon)
+    feel_like(lazy_bum)
+    grab(glasses)
+    brush_teeth(toothpaste)
+    leave = walk_out(nowhere)
+    if leave == True:
+      navigate_to(location = Providence, come_back = True)
+
+## Writing custom functions
+
+Even better... if this is a routine that I iterate through often, I can nest this sequence of functions inside a custom function. How might I write this?
+
+    Function start_day(is_pandemic):
+        wake_up(late_afternoon)
+        feel_like(lazy_bum)
+        grab(glasses)
+        brush_teeth(toothpaste)
+        
+        if is_pandemic == True:
+            leave = walk_out(nowhere)
+        else:
+            leave = walk_out(work)
+        
+        if leave == True:
+            navigate_to(location = Providence, come_back = True)
+
+Why is this useful? Because now I have a sequence of actions that I can call whenever I need to start my day. For example, I can combine my custom function with iteration and control logic to control my day-to-day behavior:
+
+    while grad_student == True:
+        is_pandemic = covid19_still_around()
+        start_day(is_pandemic)
+        work_all_day(urgent_upcoming_deadline = True)
+        sleep()
+
+Let's break this down into plain English. While it's true that I'm a grad student, I first check whether the covid19 pandemic is still around. If so, supplying that argument to the function `start_day` causes me to stay home. If not, supplying that argument causes me to walk to work.
+
+# Variables
+
+There's one last key idea you need to understand before you've understood the most fundamental concepts in programming, which is that variables are containers for information.
+
+Sometimes, the containers are small, and they only fit one piece of information inside them. These are called **scalar** variables. Here's an example of a scalar assignment: `x = "fish"`
+
+Sometimes, the containers are bigger, and they can fit lots of scalars inside of them. For example: `x = ["fish", "painting", "iPhone"]`. This is a **vector** that's assigned to the variable `x`. If it helps, you can think of a vector as being like a single row of a datatable.
+
+Sometimes, the containers are even bigger, and they can fit lots of vectors inside of them. This is sometimes called an **array**, a **matrix**, a **dataframe**, a **datatable**, and so on. For example:
+
+    x = [
+      ["fish", "painting", "iPhone"],
+      ["crocodile", "song", "Android"],
+      ["hummingbird", "sculpture", "Nokia"]
+    ]
+
+Now, the variable `x` contains a 3-by-3 array, since there are three rows and three elements inside each row.
+
+# Summary
+
+I've stayed true to my word: we haven't written a single line of "real" code here. But, using pseudocode, we've developed some intuitions about how real code could be written in various computing languages.
+
+What have we learned?
+
+1.  **Datatypes:** There are different types of data. They're useful for different things.
+2.  **Operators:** Using operators, we can take two pieces of data and "do" something with them.
+3.  **Control logic:** Using operators, we can control whether certain actions are taken.
+4.  **Iteration:** Using control logic, we can perform the same actions over and over and over again.
+5.  **Functions:** In order to do anything functional with data, we have to define i) which data to use, and ii) what actions to perform on those data. Functions specify both of these things.
+6.  **Variables:** We can store the results of our computation inside containers. If needed, we can even put those containers into bigger containers.
+
+All of these ideas can be combined with each other in infinitely complex ways, and it is this process of combining ideas that defines the art of programming.
+
+# Next steps
+
+So hopefully, after reading this little guide, you feel less afraid of writing "real" code. That's great! If you understand these very fundamental ideas, you can learn to translate them into language-specific syntax.
+
+In the `into-the-tidyverse` tutorial series, here are my goals for you:
+
+-   Give you practical data-wrangling skills that can be immediately used with your own datasets
+
+-   Develop intuitions about how programming works (both within the `tidyverse` and beyond), so that you can use what you've learned as a jumping-off point to teach yourself more advanced skills
+
+-   Build the necessary cognitive scaffolding for you to later expand your technical skillset to statistical and/or computational modeling
+
+In the next session, we'll go through instructions for installing the necessary software to complete these tutorials: R, RStudio, and GitHub Desktop.
